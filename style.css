@@ -1,0 +1,333 @@
+/* ==========================================================================
+   1. VARIÁVEIS DE DESIGN (Paleta de Cores e Tokens de UX)
+   ========================================================================== */
+:root {
+    --primary-red: #A61C1C;
+    --primary-red-hover: #801212;
+    --soft-green: #2C5E3B;
+    --soft-green-hover: #1E3F27;
+    --warm-white: #FAF9F6;
+    --accent-yellow: #F4C430;
+    --text-dark: #2B2A29;
+    --text-light: #666461;
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 12px;
+}
+
+/* ==========================================================================
+   2. RESETS E CONFIGURAÇÕES GERAIS
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--warm-white);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+
+h1, h2, h3 {
+    font-family: 'Italiana', serif;
+    font-weight: 700;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Botão Base (Padrão de Acessibilidade e Cliques) */
+.btn {
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border: none;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-red);
+    color: white;
+    box-shadow: 0 4px 15px rgba(166, 28, 28, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-red-hover);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ==========================================================================
+   3. SEÇÃO HERO (Cabeçalho de Alto Impacto)
+   ========================================================================== */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), 
+                url('./img/slice-crispy-pizza-with-meat-cheese.jpg') no-repeat center center/cover;
+    color: white;
+    text-align: center;
+    padding: 80px 0;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    margin-bottom: 40px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+}
+
+/* ==========================================================================
+   4. SEÇÃO SOBRE NÓS
+   ========================================================================== */
+.about {
+    padding: 100px 0;
+    background-color: white;
+}
+
+.about-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.about-image img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+}
+
+.section-tag {
+    color: var(--soft-green);
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+    color: var(--text-dark);
+}
+
+.about p {
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   5. SEÇÃO SABORES (Menu Interativo de Seleção Rápida)
+   ========================================================================== */
+.flavors {
+    padding: 100px 0;
+    background-color: var(--warm-white);
+}
+
+.text-center {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.flavors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.flavor-card {
+    background: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition-smooth);
+    border: 1px solid rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+}
+
+.flavor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.flavor-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.flavor-info {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.flavor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.flavor-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.flavor-price {
+    color: var(--soft-green);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.flavor-description {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+/* Botão de seleção rápida (Gatilho de UX) */
+.btn-select {
+    background-color: transparent;
+    border: 2px solid var(--soft-green);
+    color: var(--soft-green);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    width: 100%;
+    transition: var(--transition-smooth);
+    cursor: pointer;
+}
+
+.btn-select:hover {
+    background-color: var(--soft-green);
+    color: white;
+}
+
+/* ==========================================================================
+   6. SEÇÃO PEDIDO (Formulário Otimizado)
+   ========================================================================== */
+.checkout {
+    padding: 100px 0;
+    background-color: white;
+}
+
+.checkout-box {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--warm-white);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    border-top: 4px solid var(--primary-red);
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 1rem;
+    border: 2px solid #E2E0DD;
+    border-radius: 8px;
+    background-color: white;
+    transition: var(--transition-smooth);
+    outline: none;
+}
+
+.form-control:focus {
+    border-color: var(--soft-green);
+    box-shadow: 0 0 0 4px rgba(44, 94, 59, 0.1);
+}
+
+/* Customização dos selects para consistência visual */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://w3.org' viewBox='0 0 24 24' fill='none' stroke='%232B2A29' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.btn-checkout {
+    width: 100%;
+    background-color: var(--soft-green);
+    color: white;
+    box-shadow: 0 4px 15px rgba(44, 94, 59, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-checkout:hover {
+    background-color: var(--soft-green-hover);
+}
+
+/* ==========================================================================
+   7. MEDIA QUERIES (Responsividade)
+   ========================================================================== */
+@media (max-width: 968px) {
+    .hero h1 { font-size: 3rem; }
+    .about-wrapper { grid-template-columns: 1fr; gap: 40px; }
+    .about-image img { height: 300px; }
+    .section-title { font-size: 2rem; }
+}
+
+@media (max-width: 576px) {
+    .hero h1 { font-size: 2.25rem; }
+    .hero p { font-size: 1.1rem; }
+    .checkout-box { padding: 24px; }
+    .container { padding: 0 16px; }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Pedidos - Pizzaria Ubatuba</title>
+    <!-- Tailwind CSS para estilizar rápido -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow">
+            <h1 class="text-2xl font-bold text-red-600">🍕 Painel de Pedidos (Caixa)</h1>
+            <span id="status-conexao" class="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-medium">Conectando...</span>
+        </header>
+
+        <!-- Lista de Pedidos Pendentes -->
+        <div id="lista-pedidos" class="grid gap-4">
+            <!-- Os pedidos entram aqui dinamicamente -->
+            <p class="text-gray-500 text-center py-10 bg-white rounded-lg shadow">Nenhum pedido pendente no momento...</p>
+        </div>
+    </div>
+
+    <!-- Script de Conexão e Lógica -->
+    <script>
+        // ⚠️ SUBSTITUA PELAS SUAS CHAVES DO SUPABASE (Pegue em Project Settings > API)
+        const SUPABASE_URL = 'SUA_URL_DO_SUPABASE_AQUI';
+        const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_AQUI';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const listaPedidosEl = document.getElementById('lista-pedidos');
+        const statusConexaoEl = document.getElementById('status-conexao');
+
+        // Tocar um som de bipe quando chegar pedido novo (beep simples via Web Audio API)
+        function tocarAlarme() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Frequência do som
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5); // Toca por meio segundo
+            } catch (e) {
+                console.log("Áudio bloqueado pelo navegador até haver interação.");
+            }
+        }
+
+        // Buscar pedidos pendentes ao carregar a página
+        async function carregarPedidos() {
+            const { data, error } = await supabaseClient
+                .from('pedidos')
+                .select('*')
+                .eq('status', 'pendente')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao buscar pedidos:', error);
+                statusConexaoEl.textContent = 'Erro de Conexão';
+                statusConexaoEl.className = 'text-sm bg-red-100 text-red-800 px-3 py-1 rounded-full font-medium';
+                return;
+            }
+
+            statusConexaoEl.textContent = 'Online (Tempo Real)';
+            statusConexaoEl.className = 'text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium';
+            
+            renderizarPedidos(data);
+        }
+
+        // Renderizar na tela
+        function renderizarPedidos(pedidos) {
+            if (!pedidos || pedidos.length === 0) {
+                listaPedidosEl.innerHTML = `<p class="text-gray-500 text-center py-10 bg-white rounded-lg shadow">Nenhum pedido pendente no momento...</p>`;
+                return;
+            }
+
+            listaPedidosEl.innerHTML = '';
+            pedidos.forEach(pedido => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-5 rounded-lg shadow border-l-4 border-red-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-4';
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-lg text-gray-800">Pedido #${pedido.id}</span>
+                            <span class="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded">${new Date(pedido.created_at).toLocaleTimeString()}</span>
+                        </div>
+                        <p class="text-gray-700 font-semibold mt-1">👤 ${pedido.cliente_nome} (${pedido.cliente_telefone})</p>
+                        <p class="text-gray-600 text-sm mt-1">📍 ${pedido.endereco || 'Retirada no Balcão'}</p>
+                        <div class="bg-gray-50 p-3 rounded mt-3 text-sm text-gray-800 border">
+                            <strong>Itens:</strong><br>${pedido.itens.replace(/\n/g, '<br>')}
+                        </div>
+                        <p class="text-red-600 font-bold mt-2 text-lg">Total: R$ ${Number(pedido.total).toFixed(2)}</p>
+                    </div>
+                    <div class="flex flex-col gap-2 w-full md:w-auto">
+                        <button onclick="imprimirPedido(${pedido.id}, '${pedido.cliente_nome}', '${pedido.cliente_telefone}', \`${pedido.itens}\`, ${pedido.total})" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded text-sm transition shadow">
+                            🖨️ Imprimir Comanda
+                        </button>
+                        <button onclick="concluirPedido(${pedido.id})" 
+                            class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded text-sm transition shadow">
+                            ✅ Concluir / Finalizar
+                        </button>
+                    </div>
+                `;
+                listaPedidosEl.appendChild(card);
+            });
+        }
+
+        // Função de Impressão Térmica (Abre janela otimizada para bobina)
+        function imprimirPedido(id, nome, telefone, itens, total) {
+            let janela = window.open('', '', 'width=350,height=600');
+            janela.document.write(`
+                <html>
+                <head><style>
+                    body { font-family: 'Courier New', monospace; font-size: 12px; width: 300px; margin: 0; padding: 10px; }
+                    h2, p { margin: 5px 0; text-align: center; }
+                    .divider { border-bottom: 1px dashed #000; margin: 10px 0; }
+                </style></head>
+                <body>
+                    <h2>PIZZARIA UBATUBA</h2>
+                    <p>Comanda de Produção / Caixa</p>
+                    <div class="divider"></div>
+                    <p><b>Pedido: #${id}</b></p>
+                    <p>Data: ${new Date().toLocaleString()}</p>
+                    <div class="divider"></div>
+                    <p align="left"><b>Cliente:</b> ${nome}</p>
+                    <p align="left"><b>Tel:</b> ${telefone}</p>
+                    <div class="divider"></div>
+                    <p align="left"><b>Itens do Pedido:</b><br>${itens.replace(/\n/g, '<br>')}</p>
+                    <div class="divider"></div>
+                    <p align="right"><b>TOTAL: R$ ${total.toFixed(2)}</b></p>
+                    <div class="divider"></div>
+                    <p><i>Impresso via Sistema Web</i></p>
+                    <script>
+                        window.onload = function() { window.print(); window.close(); }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            janela.document.close();
+        }
+
+        // Mudar status do pedido para sumir da tela de pendentes
+        async function concluirPedido(id) {
+            const { error } = await supabaseClient
+                .from('pedidos')
+                .update({ status: 'concluido' })
+                .eq('id', id);
+
+            if (error) {
+                alert('Erro ao concluir pedido.');
+            } else {
+                carregarPedidos();
+            }
+        }
+
+        // Ouve novos pedidos em TEMPO REAL via WebSocket do Supabase
+        supabaseClient
+            .channel('public:pedidos')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, payload => {
+                tocarAlarme();
+                carregarPedidos();
+            })
+            .subscribe();
+
+        // Inicializa carregando os pedidos ao abrir a página
+        carregarPedidos();
+    </script>
+</body>
+</html>

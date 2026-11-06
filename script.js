@@ -48,11 +48,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // Seu número do WhatsApp comercial configurado (Apenas números)
-            const numeroTelefone = "5511998803853"; 
+            const numeroTelefone = "5512996353271"; 
 
             // Construção do texto limpo usando a sintaxe tradicional de strings para máxima compatibilidade
             const textoMensagem = 
-                "*🍕 NOVO PEDIDO - BELLA VITA*\n\n" +
+                "* NOVO PEDIDO - Baratella Pizzaria*\n\n" +
                 "*Cliente:* " + nomeCliente + "\n" +
                 "*Pedido:* " + quantidade + "x Pizza " + saborEscolhido + "\n" +
                 "*Endereço:* " + endereco + "\n" +

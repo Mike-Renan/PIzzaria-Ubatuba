@@ -27,6 +27,8 @@
                 <p>O verdadeiro sabor da pizza artesanal
                     Ingredientes selecionados e massa no ponto certo.</p>
                 <a href="#flavors" class="btn btn-primary">Fazer Pedido Agora</a>
+                <a href="https://wa.me/5511998803853" class="btn btn-secondary" target="_blank">Falar Conosco Pelo
+                    whatsapp </a>
             </div>
         </div>
     </header>
@@ -98,7 +100,7 @@
                         <p class="flavor-description">Combinação equilibrada de mozzarella, gorgonzola dolce, provolone
                             defumado e parmesão curado.</p>
                         <!-- <button class="btn-select" onclick="selecionarSabor('Quattro Formaggi')">Selecionar -->
-                            Sabor</button>
+                        <!-- Sabor</button> -->
                     </div>
                 </div>
 
@@ -112,7 +114,7 @@
                         </div>
                         <p class="flavor-description">Peito de frango desfiado e temperado, coberto com o autêntico
                             requeijão Catupiry e milho verde fresco.</p>
-                            <!-- <button class="btn-select" onclick="selecionarSabor('Frango Premium')">Selecionar Sabor</button> -->
+                        <!-- <button class="btn-select" onclick="selecionarSabor('Frango Premium')">Selecionar Sabor</button> -->
                     </div>
                 </div>
 
@@ -127,7 +129,7 @@
                         <p class="flavor-description">Molho de tomate especial, mozzarella, finas fatias de calabresa
                             defumada artesanal e cebola roxa.</p>
                         <!-- <button class="btn-select" onclick="selecionarSabor('Calabresa Defumada')">Selecionar -->
-                            Sabor</button>
+                        <!-- Sabor</button> -->
                     </div>
                 </div>
 
@@ -342,38 +344,90 @@
                     <button type="submit" class="btn btn-checkout">
                         <span>Fazer Pedido</span>
                     </button>
-                    </form>
-                    <!-- TELA DE RASTREIO (Fica escondida até o pedido ser feito ou recuperado da memória) -->
-                    <div id="telaRastreio"
-                        style="display: none; text-align: center; padding: 30px 15px; background: #fff; border-radius: 8px; border: 1px solid #eee; margin-top: 20px;">
-                        <h2 style="color: #b30000; font-size: 1.6rem; font-weight: bold; margin-bottom: 10px;">Pedido Confirmado! 🎉</h2>
-                        <p style="color: #666; margin-bottom: 25px;">Acompanhe o status da sua pizza em tempo real:</p>
-                    
-                        <div style="display: flex; flex-direction: column; gap: 15px; max-width: 350px; margin: 0 auto; text-align: left;">
-                            <div id="status-pendente"
-                                style="padding: 12px; border-left: 4px solid #f59e0b; background: #fef3c7; font-weight: bold; color: #333; border-radius: 0 4px 4px 0;">
-                                ⏳ Pedido Recebido pelo Restaurante
-                            </div>
-                            <div id="status-preparando"
-                                style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
-                                🍕 Em Preparação (Forno)
-                            </div>
-                            <div id="status-entrega"
-                                style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
-                                🛵 Saiu para Entrega / Pronta para Retirar
-                            </div>
-                            <div id="status-concluido"
-                                style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
-                                ✅ Pedido Concluído. Bom Apetite!
-                            </div>
+                </form>
+                <!-- TELA DE RASTREIO (Fica escondida até o pedido ser feito ou recuperado da memória) -->
+                <div id="telaRastreio"
+                    style="display: none; text-align: center; padding: 30px 15px; background: #fff; border-radius: 8px; border: 1px solid #eee; margin-top: 20px;">
+                    <h2 style="color: #b30000; font-size: 1.6rem; font-weight: bold; margin-bottom: 10px;">Pedido
+                        Confirmado! 🎉</h2>
+                    <p style="color: #666; margin-bottom: 25px;">Acompanhe o status da sua pizza em tempo real:</p>
+
+                    <div
+                        style="display: flex; flex-direction: column; gap: 15px; max-width: 350px; margin: 0 auto; text-align: left;">
+                        <div id="status-pendente"
+                            style="padding: 12px; border-left: 4px solid #f59e0b; background: #fef3c7; font-weight: bold; color: #333; border-radius: 0 4px 4px 0;">
+                            ⏳ Pedido Recebido pelo Restaurante
                         </div>
-                    
-                        <p style="font-size: 0.85rem; color: #999; margin-top: 25px;">* Pode fechar o site e voltar mais tarde. O seu status
-                            ficará salvo aqui!</p>
+                        <div id="status-preparando"
+                            style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
+                            🍕 Em Preparação (Forno)
+                        </div>
+                        <div id="status-entrega"
+                            style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
+                            🛵 Saiu para Entrega / Pronta para Retirar
+                        </div>
+                        <div id="status-concluido"
+                            style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
+                            ✅ Pedido Concluído. Bom Apetite!
+                        </div>
                     </div>
+
+                    <p style="font-size: 0.85rem; color: #999; margin-top: 25px;">* Pode fechar o site e voltar mais
+                        tarde. O seu status
+                        ficará salvo aqui!</p>
+                </div>
             </div>
         </div>
     </section>
+    <!-- SECÇÃO DE LOCALIZAÇÃO E CONTATO (RODAPÉ) -->
+    <footer
+        style="background-color: #1a1a1a; color: #ffffff; padding: 40px 20px; margin-top: 40px; text-align: center; border-top: 4px solid #b30000;">
+        <div style="max-width: 600px; margin: 0 auto;">
+
+            <!-- Nome e Slogan -->
+            <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; color: #ff4d4d;">Baratella Pizzaria
+            </h3>
+            <p style="color: #cccccc; font-size: 0.95rem; margin-bottom: 25px;">A melhor pizza artesanal da região,
+                feita com tradição e rapidez para você!</p>
+
+            <!-- Bloco de Endereço -->
+            <div
+                style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333;">
+                <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; color: #fff;">📍 Onde Estamos</p>
+                <p style="color: #dddddd; font-size: 1rem; line-height: 1.5; margin: 0;">
+                    Rua Cascata, 930<br>
+                    Ubatuba, São Paulo, Brasil<br>
+                    CEP: 11693-056
+                </p>
+            </div>
+
+            <!-- Botões de Ação (Google Maps e Instagram) -->
+            <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                <!-- Botão do Google Maps -->
+                <a href="https://maps.google.com/?q=Rua+Cascata,+930,+Ubatuba+-+SP,+11693-056" target="_blank"
+                    style="background-color: #25d366; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: background 0.3s;">
+                    🗺️ Abrir no Google Maps
+                </a>
+
+                <!-- Botão do Instagram (Substitua SEU_USUARIO pelo perfil real da pizzaria) -->
+                <a href="https://www.instagram.com/baratellapizzaria?obrf=MTNvcm90azN4YWkwdQ%3D%3D" target="_blank"
+                    style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: opacity 0.3s;">
+                    📷 Siga-nos no Instagram
+                </a>
+            </div>
+
+            <!-- Direitos Reservados -->
+            <p
+                style="font-size: 0.8rem; color: #777777; margin-top: 20px; border-top: 1px solid #333; padding-top: 15px;">
+                © 2026 Baratella Pizzaria. Todos os direitos reservados. Desenvolvido para delivery web.
+            </p>
+
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5511998803853" class="link-whatsapp" target="_blank">
+        <img src="./img/whatsapp copy.png" alt="link para whatsapp">
+    </a>
     <script src="script.js"></script>
 </body>
 

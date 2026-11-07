@@ -49,6 +49,7 @@ h1, h2, h3 {
 .btn {
     display: inline-block;
     padding: 16px 32px;
+    margin-bottom: 40px;
     border-radius: var(--border-radius);
     font-weight: 600;
     text-decoration: none;
@@ -69,6 +70,18 @@ h1, h2, h3 {
     background-color: var(--primary-red-hover);
     transform: translateY(-2px);
 }
+
+.btn-secondary {
+    background-color: green;
+    color: white;
+    box-shadow: 0 4px 15px rgba(44, 94, 59, 0.3);
+}
+
+.btn-secondary:hover {
+    background-color: var(--soft-green-hover);
+    transform: translateY(-2px);
+}
+
 
 .btn-primary:active {
     transform: translateY(0);
@@ -242,6 +255,38 @@ h1, h2, h3 {
     background-color: var(--soft-green);
     color: white;
 }
+
+.btn-nav-whatsapp {
+    background-color: var(--whatsapp-green);
+    color: var(--white);
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+.link-whatsapp img {
+   height: 60px;
+   position: fixed;
+   right: 20px;
+   bottom: 20px;
+   transition: all 1s ease-in-out;
+     
+}
+.link-whatsapp img:hover{
+   transform: scale(1.09); 
+   transition: all 0.3s ease-in-out; 
+
+}
+
+.btn-nav-whatsapp:hover { transform: scale(1.05); }
+
+.btn-secundario { background-color: transparent; color: var(--white); border: 2px solid var(--white); }
+.btn-secundario:hover { background-color: green; border-color: var(--whatsapp-green); }
 
 /* ==========================================================================
    6. SEÇÃO PEDIDO (Formulário Otimizado)

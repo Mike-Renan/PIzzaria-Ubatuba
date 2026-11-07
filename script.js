@@ -186,6 +186,12 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    const numeroWhats = "5511998803853";
+    const textoMensagem = encodeURIComponent(
+        `Olá! Gostaria de fazer uma reserva na Pousada Ubatuba Itaguá. \n\n🏨 Acomodação: ${quartoEscolhido} \n📅 Data de Entrada (Check-in): ${formatadorBR(dataEntrada)} \n📅 Data de Saída (Check-out): ${formatadorBR(dataSaida)} \n\nPor favor, verifique os valores e a disponibilidade!`
+    );
+    const urlLinkWhatsApp = "https://wa.me/" + numeroWhats + "?text=" + textoMensagem;
+  
 
     // ========================================================
     // 3. FUNÇÃO QUE MUDA AS CORES DO RASTREIO

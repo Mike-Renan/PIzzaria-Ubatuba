@@ -1,20 +1,15 @@
 /**
  * Padrão de UX: Seleção Inteligente
- * Permite que o usuário clique em um sabor no menu e preencha automaticamente o formulário abaixo.
  */
 function selecionarSabor(nomeSabor) {
     const selectSabor = document.getElementById('pizzaFlavor');
-    
+
     if (selectSabor) {
         selectSabor.value = nomeSabor;
-        
-        // Rola a tela suavemente até o formulário de checkout
         const checkoutSection = document.getElementById('checkout');
         if (checkoutSection) {
             checkoutSection.scrollIntoView({ behavior: 'smooth' });
         }
-        
-        // Aplica um leve foco visual para guiar o olhar do usuário
         selectSabor.focus();
     } else {
         console.error("Elemento 'pizzaFlavor' não encontrado no HTML.");
@@ -22,18 +17,23 @@ function selecionarSabor(nomeSabor) {
 }
 
 /**
- * Lógica de Processamento e Integração com WhatsApp (Chaves corrigidas)
+ * INTEGRAÇÃO: Enviar Pedido para o Painel (Supabase) + WhatsApp
  */
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+
+    // 1. Inicializar Supabase com as suas credenciais
+    const SUPABASE_URL = 'https://yaxzlfxyiifyuiytkoyw.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_SzTAcXjJTK5bkIOfAA_2cw_X6_2w7JC';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const form = document.getElementById('pizzaOrderForm');
 
-    // O bloco "if" agora está corretamente posicionado dentro do escopo do DOMContentLoaded
     if (form) {
-        form.addEventListener('submit', function(event) {
-            // Evita o recarregamento padrão da página
+        // Transformamos a função num "async function" para poder usar a base de dados
+        form.addEventListener('submit', async function (event) {
             event.preventDefault();
 
-            // Captura e limpa os dados inseridos
+            // Captura os dados do formulário
             const nomeCliente = document.getElementById('clientName').value.trim();
             const quantidade = document.getElementById('pizzaQuantity').value;
             const saborEscolhido = document.getElementById('pizzaFlavor').value;
@@ -41,48 +41,77 @@ document.addEventListener("DOMContentLoaded", function() {
             const bairro = document.getElementById('clientNeighborhood').value.trim();
             const formaPagamento = document.getElementById('paymentMethod').value;
 
-            // Validação de segurança básica antes do envio
             if (!nomeCliente || !saborEscolhido || !endereco || !bairro || !formaPagamento) {
                 alert("Por favor, preencha todos os campos antes de enviar.");
                 return;
             }
 
-            // Seu número do WhatsApp comercial configurado (Apenas números)
-            const numeroTelefone = "5512996353271"; 
-
-            // Construção do texto limpo usando a sintaxe tradicional de strings para máxima compatibilidade
-            const textoMensagem = 
-                "* NOVO PEDIDO - Baratella Pizzaria*\n\n" +
-                "*Cliente:* " + nomeCliente + "\n" +
-                "*Pedido:* " + quantidade + "x Pizza " + saborEscolhido + "\n" +
-                "*Endereço:* " + endereco + "\n" +
-                "*Bairro:* " + bairro + "\n" +
-                "*Forma de Pagamento:* " + formaPagamento + "\n\n" +
-                "_Enviado automaticamente pelo site da pizzaria._";
-
-            // Codificação segura para a URL
-            const messagingFormatada = encodeURIComponent(textoMensagem);
-
-            // Geração da URL linear infalível e sem erros de template literal
-            const urlLinear = "https://wa.me/" + numeroTelefone + "?text=" + messagingFormatada;
-
-            // Feedback visual e UX Transicional
+            // Feedback visual no botão
             const botaoEnvio = form.querySelector('.btn-checkout');
             const textoOriginal = botaoEnvio.innerHTML;
-            
-            botaoEnvio.innerHTML = "<span>Processando... Redirecionando</span>";
+            botaoEnvio.innerHTML = "<span>Enviando para a cozinha...</span>";
             botaoEnvio.style.opacity = "0.7";
             botaoEnvio.disabled = true;
 
-            setTimeout(() => {
-                // Abre o link do WhatsApp na mesma aba (padrão ideal para mobile)
+            // Formata os textos para guardar na base de dados
+            const itensFormatados = `${quantidade}x Pizza ${saborEscolhido}`;
+            // Se o formulário não tiver campo para telefone, colocamos um aviso para o atendente
+            const telefoneCliente = "Não preenchido";
+
+            // Junta endereço e bairro para o atendente ver no painel
+            const enderecoCompleto = `${endereco}, Bairro: ${bairro} (Pag. via ${formaPagamento})`;
+
+            // 2. Enviar para o banco de dados (Supabase)
+            const { error } = await supabaseClient
+                .from('pedidos')
+                .insert([
+                    {
+                        cliente_nome: nomeCliente,
+                        quantidade: quantidade,
+                        sabor: saborEscolhido,
+                        endereco: endereco,
+                        bairro: bairro,
+                        forma_pagamento: formaPagamento,
+                        status: 'pendente'
+                    }
+                ]);
+
+            if (error) {
+                console.error("Erro no Supabase:", error);
+                alert("Houve um pequeno atraso na rede. Vamos redirecionar para o WhatsApp por segurança.");
+                enviarParaWhatsApp();
+            } else {
+                alert("🎉 Pedido recebido na cozinha com sucesso!");
+                form.reset();
+
+                // Opcional: Se a pizzaria quiser continuar a receber também no WhatsApp, descomente a linha abaixo
+                // enviarParaWhatsApp();
+            }
+
+            // Restaura o botão
+            botaoEnvio.innerHTML = textoOriginal;
+            botaoEnvio.style.opacity = "1";
+            botaoEnvio.disabled = false;
+
+
+            // ==========================================
+            // FUNÇÃO DE FALLBACK PARA O WHATSAPP
+            // ==========================================
+            function enviarParaWhatsApp() {
+                const numeroTelefone = "5512996353271";
+                const textoMensagem =
+                    "* NOVO PEDIDO - Baratella Pizzaria*\n\n" +
+                    "*Cliente:* " + nomeCliente + "\n" +
+                    "*Pedido:* " + quantidade + "x Pizza " + saborEscolhido + "\n" +
+                    "*Endereço:* " + endereco + "\n" +
+                    "*Bairro:* " + bairro + "\n" +
+                    "*Forma de Pagamento:* " + formaPagamento + "\n\n" +
+                    "_Enviado pelo sistema Web._";
+
+                const messagingFormatada = encodeURIComponent(textoMensagem);
+                const urlLinear = "https://wa.me/" + numeroTelefone + "?text=" + messagingFormatada;
                 window.location.href = urlLinear;
-                
-                // Restaura o estado do botão caso o usuário decida voltar
-                botaoEnvio.innerHTML = textoOriginal;
-                botaoEnvio.style.opacity = "1";
-                botaoEnvio.disabled = false;
-            }, 800);
+            }
         });
     }
 });

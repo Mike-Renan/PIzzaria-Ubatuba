@@ -19,38 +19,36 @@ function zerarNumeracao() {
 }
 // -----------------------------------
 
-// 1. Função ligada ao botão para autorizar o navegador a tocar som
+// 1. Função ligada ao botão (Deixa o som a tocar, mas no MUDO)
 function desbloquearSom() {
     const som = document.getElementById('som-alarme');
     
     if (som) {
-        // Toca o som e pausa imediatamente (o navegador agora sabe que o utilizador autorizou o áudio)
-        som.play().then(() => {
-            som.pause();
-            som.currentTime = 0;
-        }).catch(e => console.log("Aguardando interação..."));
+        som.volume = 0; // Coloca no mudo
+        som.play().catch(e => console.log("Aguardando interação..."));
     }
 
-    // Muda o visual do botão para verde indicando que está pronto
+    // Muda o visual do botão
     const btnSom = document.getElementById('btn-som');
     if (btnSom) {
-        btnSom.innerHTML = "🔊 Som Ativado";
+        btnSom.innerHTML = "🔊 Som Ativado (Modo PDV)";
         btnSom.className = "bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium text-sm transition";
     }
 }
 
-// 2. Função que o Supabase vai chamar quando chegar um pedido novo
+// 2. Quando o pedido chega, o Supabase chama esta função (Apenas aumenta o volume!)
 function tocarAlarme() {
     const som = document.getElementById('som-alarme');
     
     if (som) {
-        // Reinicia o som caso já esteja a tocar
-        som.currentTime = 0; 
+        som.currentTime = 0; // Volta a música para o início
+        som.volume = 1;      // Aumenta o volume para o máximo (toca de verdade!)
         
-        // Tenta reproduzir o som
-        som.play().catch(function(erro) {
-            console.log("O navegador bloqueou o som. O utilizador precisa de clicar na página primeiro.");
-        });
+        // Depois de 4 segundos, volta a colocar no mudo para não ficar a tocar para sempre
+        // (Se o seu sompedido.wav for muito longo, pode aumentar este número "4000" para "6000")
+        setTimeout(() => {
+            som.volume = 0;
+        }, 4000); 
     }
 }
 
@@ -197,12 +195,23 @@ async function concluirPedido(id) {
     }
 }
 
+// ==========================================
+// SUBSCRIÇÃO EM TEMPO REAL (COM DIAGNÓSTICO)
+// ==========================================
+console.log("A tentar ligar ao Supabase Realtime...");
+
 supabaseClient.channel('public:pedidos')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, payload => {
+        console.log("🚨 AVISO: Novo pedido chegou no banco de dados!", payload);
         tocarAlarme();
         carregarPedidos();
     })
-    .subscribe();
+    .subscribe((status) => {
+        console.log("Status da ligação Realtime:", status);
+        if (status === 'SUBSCRIBED') {
+            console.log("✅ Ligação em tempo real estabelecida com sucesso!");
+        }
+    });
 
 // Inicia o painel
 carregarPedidos();

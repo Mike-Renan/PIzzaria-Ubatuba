@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +8,24 @@
     <!-- Google Fonts para uma tipografia moderna e legível -->
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Italiana&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://googleapis.com/css2?family=Italiana&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <!-- Vínculo com o arquivo de estilização externa -->
     <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="./img/logo-pizza.jpg" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
 
-    
+
 
     <header class="hero">
         <div class="container">
             <div class="hero-content">
                 <!-- <h1>Baratella Pizzaria</h1> -->
                 <p>O verdadeiro sabor da pizza artesanal
-Ingredientes selecionados e massa no ponto certo.</p>
+                    Ingredientes selecionados e massa no ponto certo.</p>
                 <a href="#flavors" class="btn btn-primary">Fazer Pedido Agora</a>
             </div>
         </div>
@@ -36,8 +40,10 @@ Ingredientes selecionados e massa no ponto certo.</p>
                 <div class="about-text">
                     <span class="section-tag">Tradição & Família</span>
                     <h2 class="section-title">Nossa História, Seu Momento</h2>
-                    <p>Fundada por apaixonados pela gastronomia italiana, a Bella Vita une ingredientes rigorosamente selecionados a processos artesanais de longa fermentação.</p>
-                    <p>Queremos que cada fatia seja uma extensão da sua melhor experiência de viagem: relaxante, memorável e recheada de sabor.</p>
+                    <p>Fundada por apaixonados pela gastronomia italiana, a Bella Vita une ingredientes rigorosamente
+                        selecionados a processos artesanais de longa fermentação.</p>
+                    <p>Queremos que cada fatia seja uma extensão da sua melhor experiência de viagem: relaxante,
+                        memorável e recheada de sabor.</p>
                 </div>
             </div>
         </div>
@@ -49,7 +55,7 @@ Ingredientes selecionados e massa no ponto certo.</p>
                 <span class="section-tag">Menu Selecionado</span>
                 <h2 class="section-title">Nossos Sabores Exclusivos</h2>
             </div>
-            
+
             <div class="flavors-grid">
                 <!-- Sabor 1 -->
                 <div class="flavor-card">
@@ -59,8 +65,10 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Margherita Clássica</h3>
                             <span class="flavor-price">R$ 52</span>
                         </div>
-                        <p class="flavor-description">Molho de tomate artesanal, mozzarella di bufala fatiada, manjericão fresco e um fio de azeite extravirgem.</p>
-                        <button class="btn-select" onclick="selecionarSabor('Margherita Clássica')">Selecionar Sabor</button>
+                        <p class="flavor-description">Molho de tomate artesanal, mozzarella di bufala fatiada,
+                            manjericão fresco e um fio de azeite extravirgem.</p>
+                        <button class="btn-select" onclick="selecionarSabor('Margherita Clássica')">Selecionar
+                            Sabor</button>
                     </div>
                 </div>
 
@@ -72,8 +80,10 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Diavola (Pepperoni)</h3>
                             <span class="flavor-price">R$ 58</span>
                         </div>
-                        <p class="flavor-description">Molho de tomate, mozzarella premium, pepperoni artesanal levemente picante e orégano fresco.</p>
-                        <button class="btn-select" onclick="selecionarSabor('Diavola (Pepperoni)')">Selecionar Sabor</button>
+                        <p class="flavor-description">Molho de tomate, mozzarella premium, pepperoni artesanal levemente
+                            picante e orégano fresco.</p>
+                        <button class="btn-select" onclick="selecionarSabor('Diavola (Pepperoni)')">Selecionar
+                            Sabor</button>
                     </div>
                 </div>
 
@@ -85,8 +95,10 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Quattro Formaggi</h3>
                             <span class="flavor-price">R$ 62</span>
                         </div>
-                        <p class="flavor-description">Combinação equilibrada de mozzarella, gorgonzola dolce, provolone defumado e parmesão curado.</p>
-                        <button class="btn-select" onclick="selecionarSabor('Quattro Formaggi')">Selecionar Sabor</button>
+                        <p class="flavor-description">Combinação equilibrada de mozzarella, gorgonzola dolce, provolone
+                            defumado e parmesão curado.</p>
+                        <button class="btn-select" onclick="selecionarSabor('Quattro Formaggi')">Selecionar
+                            Sabor</button>
                     </div>
                 </div>
 
@@ -98,7 +110,8 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Frango Premium</h3>
                             <span class="flavor-price">R$ 56</span>
                         </div>
-                        <p class="flavor-description">Peito de frango desfiado e temperado, coberto com o autêntico requeijão Catupiry e milho verde fresco.</p>
+                        <p class="flavor-description">Peito de frango desfiado e temperado, coberto com o autêntico
+                            requeijão Catupiry e milho verde fresco.</p>
                         <button class="btn-select" onclick="selecionarSabor('Frango Premium')">Selecionar Sabor</button>
                     </div>
                 </div>
@@ -111,8 +124,10 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Calabresa Defumada</h3>
                             <span class="flavor-price">R$ 54</span>
                         </div>
-                        <p class="flavor-description">Molho de tomate especial, mozzarella, finas fatias de calabresa defumada artesanal e cebola roxa.</p>
-                        <button class="btn-select" onclick="selecionarSabor('Calabresa Defumada')">Selecionar Sabor</button>
+                        <p class="flavor-description">Molho de tomate especial, mozzarella, finas fatias de calabresa
+                            defumada artesanal e cebola roxa.</p>
+                        <button class="btn-select" onclick="selecionarSabor('Calabresa Defumada')">Selecionar
+                            Sabor</button>
                     </div>
                 </div>
 
@@ -124,7 +139,8 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Parma e Rúcula</h3>
                             <span class="flavor-price">R$ 68</span>
                         </div>
-                        <p class="flavor-description">Base de mozzarella, finalizada pós-forno com presunto de Parma cru, rúcula fresca e lascas de parmesão.</p>
+                        <p class="flavor-description">Base de mozzarella, finalizada pós-forno com presunto de Parma
+                            cru, rúcula fresca e lascas de parmesão.</p>
                         <button class="btn-select" onclick="selecionarSabor('Parma e Rúcula')">Selecionar Sabor</button>
                     </div>
                 </div>
@@ -137,7 +153,8 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Funghi Trufado</h3>
                             <span class="flavor-price">R$ 72</span>
                         </div>
-                        <p class="flavor-description">Mix de cogumelos salteados (shimeji e paris), mozzarella de búfala e um toque final com azeite trufado.</p>
+                        <p class="flavor-description">Mix de cogumelos salteados (shimeji e paris), mozzarella de búfala
+                            e um toque final com azeite trufado.</p>
                         <button class="btn-select" onclick="selecionarSabor('Funghi Trufado')">Selecionar Sabor</button>
                     </div>
                 </div>
@@ -150,12 +167,14 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Brigadeiro Gourmet</h3>
                             <span class="flavor-price">R$ 48</span>
                         </div>
-                        <p class="flavor-description">Massa doce, cobertura de brigadeiro cremoso, granulado belga e finalização com morangos frescos.</p>
-                        <button class="btn-select" onclick="selecionarSabor('Brigadeiro Gourmet')">Selecionar Sabor</button>
+                        <p class="flavor-description">Massa doce, cobertura de brigadeiro cremoso, granulado belga e
+                            finalização com morangos frescos.</p>
+                        <button class="btn-select" onclick="selecionarSabor('Brigadeiro Gourmet')">Selecionar
+                            Sabor</button>
                     </div>
-                    
+
                 </div>
-                 <!-- Sabor 9 -->
+                <!-- Sabor 9 -->
                 <div class="flavor-card">
                     <img src="./img/mussa.jpg" alt="Pizza de Brigadeiro" class="flavor-img">
                     <div class="flavor-info">
@@ -163,163 +182,171 @@ Ingredientes selecionados e massa no ponto certo.</p>
                             <h3 class="flavor-title">Mussarela</h3>
                             <span class="flavor-price">R$ 48</span>
                         </div>
-                        <p class="flavor-description">Molho de tomate artesanal da casa, generosa camada de mozzarella premium derretida, rodelas de tomate fresco, finalizada com azeitonas pretas chilenas e orégano chileno salpicado.</p>
+                        <p class="flavor-description">Molho de tomate artesanal da casa, generosa camada de mozzarella
+                            premium derretida, rodelas de tomate fresco, finalizada com azeitonas pretas chilenas e
+                            orégano chileno salpicado.</p>
                         <button class="btn-select" onclick="selecionarSabor('Mussarela')">Selecionar Sabor</button>
                     </div>
+                </div>
+            </div>
+    </section>
+
+    <!-- SEÇÃO CHECKOUT ATUALIZADA -->
+    <section class="checkout" id="checkout">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-tag">Rápido e Prático</span>
+                <h2 class="section-title">Finalize seu Pedido</h2>
+            </div>
+
+            <div class="checkout-box">
+                <form id="pizzaOrderForm">
+
+                    <!-- Nome do Cliente (Mantido) -->
+                    <div class="form-group">
+                        <label for="clientName">Seu Nome Completo</label>
+                        <input type="text" id="clientName" class="form-control" placeholder="Ex: Maria Silva" required>
+                    </div>
+
+                    <!-- Quantidade (Atualizado com onchange para calcular valor total) -->
+                    <div class="form-group">
+                        <label for="pizzaQuantity">Quantidade</label>
+                        <select id="pizzaQuantity" class="form-control" required onchange="calcularTotal()">
+                            <option value="1" selected>1 Pizza</option>
+                            <option value="2">2 Pizzas</option>
+                            <option value="3">3 Pizzas</option>
+                            <option value="4">4 Pizzas</option>
+                            <option value="5">5 Pizzas</option>
+                        </select>
+                    </div>
+
+                    <!-- NOVO: Tipo de Pizza -->
+                    <div class="form-group">
+                        <label for="tipoPizza">Tipo de Pizza</label>
+                        <select id="tipoPizza" class="form-control" onchange="verificarMeiaMeia()">
+                            <option value="inteira">Pizza Inteira (1 Sabor)</option>
+                            <option value="meia">Meia a Meia (2 Sabores)</option>
+                        </select>
+                    </div>
+
+                    <!-- Sabor 1 / Inteira (Adaptado com os seus sabores e data-preco) -->
+                    <div class="form-group">
+                        <label for="pizzaFlavor" id="labelSabor1">Sabor da Pizza (Ou Sabor 1)</label>
+                        <select id="pizzaFlavor" class="form-control" required onchange="calcularTotal()">
+                            <option value="" data-preco="0" disabled selected>Escolha um sabor...</option>
+                            <option value="Margherita Clássica" data-preco="52">Margherita Clássica - R$ 52</option>
+                            <option value="Diavola (Pepperoni)" data-preco="58">Diavola (Pepperoni) - R$ 58</option>
+                            <option value="Quattro Formaggi" data-preco="62">Quattro Formaggi - R$ 62</option>
+                            <option value="Frango Premium" data-preco="56">Frango Premium - R$ 56</option>
+                            <option value="Calabresa Defumada" data-preco="54">Calabresa Defumada - R$ 54</option>
+                            <option value="Parma e Rúcula" data-preco="68">Parma e Rúcula - R$ 68</option>
+                            <option value="Funghi Trufado" data-preco="72">Funghi Trufado - R$ 72</option>
+                            <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
+                            <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
+                        </select>
+                    </div>
+
+                    <!-- Sabor 2 (Escondido por padrão) -->
+                    <div class="form-group" id="divSabor2" style="display: none;">
+                        <label for="pizzaFlavor2">Sabor 2 (Metade)</label>
+                        <select id="pizzaFlavor2" class="form-control" onchange="calcularTotal()">
+                            <option value="" data-preco="0" disabled selected>Escolha o segundo sabor...</option>
+                            <option value="Margherita Clássica" data-preco="52">Margherita Clássica - R$ 52</option>
+                            <option value="Diavola (Pepperoni)" data-preco="58">Diavola (Pepperoni) - R$ 58</option>
+                            <option value="Quattro Formaggi" data-preco="62">Quattro Formaggi - R$ 62</option>
+                            <option value="Frango Premium" data-preco="56">Frango Premium - R$ 56</option>
+                            <option value="Calabresa Defumada" data-preco="54">Calabresa Defumada - R$ 54</option>
+                            <option value="Parma e Rúcula" data-preco="68">Parma e Rúcula - R$ 68</option>
+                            <option value="Funghi Trufado" data-preco="72">Funghi Trufado - R$ 72</option>
+                            <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
+                            <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
+                        </select>
+                    </div>
+
+                    <!-- NOVO: Borda -->
+                    <div class="form-group">
+                        <label for="pizzaBorda">Borda Recheada?</label>
+                        <select id="pizzaBorda" class="form-control" onchange="calcularTotal()">
+                            <option value="Sem Borda" data-preco="0">Tradicional (Sem Borda) - Grátis</option>
+                            <option value="Borda de Catupiry" data-preco="10">Borda de Catupiry - R$ 10,00</option>
+                            <option value="Borda de Cheddar" data-preco="10">Borda de Cheddar - R$ 10,00</option>
+                        </select>
+                    </div>
+
+                    <!-- NOVO: Bebidas -->
+                    <div class="form-group">
+                        <label for="pizzaBebida">Bebidas</label>
+                        <select id="pizzaBebida" class="form-control" onchange="calcularTotal()">
+                            <option value="Sem Bebida" data-preco="0">Sem Bebida</option>
+                            <option value="Coca-Cola 2L" data-preco="14">Coca-Cola 2L - R$ 14,00</option>
+                            <option value="Guaraná 2L" data-preco="12">Guaraná Antarctica 2L - R$ 12,00</option>
+                        </select>
+                    </div>
+
+                    <!-- Endereço (Mantido) -->
+                    <div class="form-group">
+                        <label for="clientAddress">Endereço de Entrega (Rua, Número, Ap/Casa)</label>
+                        <input type="text" id="clientAddress" class="form-control"
+                            placeholder="Ex: Av. Paulista, 1000 - Ap 42" required>
+                    </div>
+
+                    <!-- Bairro (Mantido) -->
+                    <div class="form-group">
+                        <label for="clientNeighborhood">Bairro</label>
+                        <input type="text" id="clientNeighborhood" class="form-control" placeholder="Ex: Bela Vista"
+                            required>
+                    </div>
+
+                    <!-- Pagamento (Atualizado com onchange) -->
+                    <div class="form-group">
+                        <label for="paymentMethod">Forma de Pagamento</label>
+                        <select id="paymentMethod" class="form-control" required onchange="verificarPix()">
+                            <option value="" disabled selected>Como deseja pagar?</option>
+                            <option value="Pix">Pix (Aprovação Instantânea)</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito (Na entrega)</option>
+                            <option value="Cartão de Débito">Cartão de Débito (Na entrega)</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                        </select>
+                    </div>
+
+                    <!-- NOVO: Área PIX (Escondida por padrão) -->
+                    <div id="areaPix" class="form-group"
+                        style="display: none; background: #e6f7ff; padding: 15px; border-radius: 8px; border: 1px dashed #0099ff; text-align: center; margin-bottom: 15px;">
+                        <h4 style="color: #005c99; font-weight: bold; margin-bottom: 10px;">Realize o Pagamento PIX</h4>
+                        <p style="margin: 5px 0; color: #333;">Chave PIX (Celular): <strong>12996353271</strong></p>
+                        <p style="margin: 5px 0; color: #333;">Nome: Baratella Pizzaria</p>
+                        <p style="font-size: 1.2rem; color: #b30000; font-weight: bold; margin: 10px 0;">
+                            Valor exato: R$ <span id="valorPixExibicao">0,00</span>
+                        </p>
+                        <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                            * Faça o pagamento no seu banco e clique em "Fazer Pedido". O preparo inicia após a
+                            confirmação no caixa.
+                        </p>
+                    </div>
+
+                    <!-- NOVO: Observações -->
+                    <div class="form-group">
+                        <label for="pizzaObservacao">Observações (Opcional)</label>
+                        <textarea id="pizzaObservacao" class="form-control" rows="2"
+                            placeholder="Ex: Tirar cebola, troco para 50..."></textarea>
+                    </div>
+
+                    <!-- NOVO: Total Dinâmico -->
+                    <div class="form-group" style="text-align: center; margin: 25px 0;">
+                        <h3 style="color: #b30000; font-weight: bold; font-size: 1.4rem;">
+                            Total a Pagar: R$ <span id="valorTotalExibicao">0,00</span>
+                        </h3>
+                    </div>
+
+                    <!-- Botão de Envio (Mantido) -->
+                    <button type="submit" class="btn btn-checkout">
+                        <span>Fazer Pedido</span>
+                    </button>
+                </form>
             </div>
         </div>
     </section>
-
-  <!-- SEÇÃO CHECKOUT ATUALIZADA -->
-<section class="checkout" id="checkout">
-    <div class="container">
-        <div class="text-center">
-            <span class="section-tag">Rápido e Prático</span>
-            <h2 class="section-title">Finalize seu Pedido</h2>
-        </div>
-
-        <div class="checkout-box">
-            <form id="pizzaOrderForm">
-                
-                <!-- Nome do Cliente (Mantido) -->
-                <div class="form-group">
-                    <label for="clientName">Seu Nome Completo</label>
-                    <input type="text" id="clientName" class="form-control" placeholder="Ex: Maria Silva" required>
-                </div>
-
-                <!-- Quantidade (Atualizado com onchange para calcular valor total) -->
-                <div class="form-group">
-                    <label for="pizzaQuantity">Quantidade</label>
-                    <select id="pizzaQuantity" class="form-control" required onchange="calcularTotal()">
-                        <option value="1" selected>1 Pizza</option>
-                        <option value="2">2 Pizzas</option>
-                        <option value="3">3 Pizzas</option>
-                        <option value="4">4 Pizzas</option>
-                        <option value="5">5 Pizzas</option>
-                    </select>
-                </div>
-
-                <!-- NOVO: Tipo de Pizza -->
-                <div class="form-group">
-                    <label for="tipoPizza">Tipo de Pizza</label>
-                    <select id="tipoPizza" class="form-control" onchange="verificarMeiaMeia()">
-                        <option value="inteira">Pizza Inteira (1 Sabor)</option>
-                        <option value="meia">Meia a Meia (2 Sabores)</option>
-                    </select>
-                </div>
-
-                <!-- Sabor 1 / Inteira (Adaptado com os seus sabores e data-preco) -->
-                <div class="form-group">
-                    <label for="pizzaFlavor" id="labelSabor1">Sabor da Pizza (Ou Sabor 1)</label>
-                    <select id="pizzaFlavor" class="form-control" required onchange="calcularTotal()">
-                        <option value="" data-preco="0" disabled selected>Escolha um sabor...</option>
-                        <option value="Margherita Clássica" data-preco="52">Margherita Clássica - R$ 52</option>
-                        <option value="Diavola (Pepperoni)" data-preco="58">Diavola (Pepperoni) - R$ 58</option>
-                        <option value="Quattro Formaggi" data-preco="62">Quattro Formaggi - R$ 62</option>
-                        <option value="Frango Premium" data-preco="56">Frango Premium - R$ 56</option>
-                        <option value="Calabresa Defumada" data-preco="54">Calabresa Defumada - R$ 54</option>
-                        <option value="Parma e Rúcula" data-preco="68">Parma e Rúcula - R$ 68</option>
-                        <option value="Funghi Trufado" data-preco="72">Funghi Trufado - R$ 72</option>
-                        <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
-                        <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
-                    </select>
-                </div>
-
-                <!-- Sabor 2 (Escondido por padrão) -->
-                <div class="form-group" id="divSabor2" style="display: none;">
-                    <label for="pizzaFlavor2">Sabor 2 (Metade)</label>
-                    <select id="pizzaFlavor2" class="form-control" onchange="calcularTotal()">
-                        <option value="" data-preco="0" disabled selected>Escolha o segundo sabor...</option>
-                        <option value="Margherita Clássica" data-preco="52">Margherita Clássica - R$ 52</option>
-                        <option value="Diavola (Pepperoni)" data-preco="58">Diavola (Pepperoni) - R$ 58</option>
-                        <option value="Quattro Formaggi" data-preco="62">Quattro Formaggi - R$ 62</option>
-                        <option value="Frango Premium" data-preco="56">Frango Premium - R$ 56</option>
-                        <option value="Calabresa Defumada" data-preco="54">Calabresa Defumada - R$ 54</option>
-                        <option value="Parma e Rúcula" data-preco="68">Parma e Rúcula - R$ 68</option>
-                        <option value="Funghi Trufado" data-preco="72">Funghi Trufado - R$ 72</option>
-                        <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
-                        <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
-                    </select>
-                </div>
-
-                <!-- NOVO: Borda -->
-                <div class="form-group">
-                    <label for="pizzaBorda">Borda Recheada?</label>
-                    <select id="pizzaBorda" class="form-control" onchange="calcularTotal()">
-                        <option value="Sem Borda" data-preco="0">Tradicional (Sem Borda) - Grátis</option>
-                        <option value="Borda de Catupiry" data-preco="10">Borda de Catupiry - R$ 10,00</option>
-                        <option value="Borda de Cheddar" data-preco="10">Borda de Cheddar - R$ 10,00</option>
-                    </select>
-                </div>
-
-                <!-- NOVO: Bebidas -->
-                <div class="form-group">
-                    <label for="pizzaBebida">Bebidas</label>
-                    <select id="pizzaBebida" class="form-control" onchange="calcularTotal()">
-                        <option value="Sem Bebida" data-preco="0">Sem Bebida</option>
-                        <option value="Coca-Cola 2L" data-preco="14">Coca-Cola 2L - R$ 14,00</option>
-                        <option value="Guaraná 2L" data-preco="12">Guaraná Antarctica 2L - R$ 12,00</option>
-                    </select>
-                </div>
-
-                <!-- Endereço (Mantido) -->
-                <div class="form-group">
-                    <label for="clientAddress">Endereço de Entrega (Rua, Número, Ap/Casa)</label>
-                    <input type="text" id="clientAddress" class="form-control" placeholder="Ex: Av. Paulista, 1000 - Ap 42" required>
-                </div>
-
-                <!-- Bairro (Mantido) -->
-                <div class="form-group">
-                    <label for="clientNeighborhood">Bairro</label>
-                    <input type="text" id="clientNeighborhood" class="form-control" placeholder="Ex: Bela Vista" required>
-                </div>
-
-            <!-- Pagamento (Atualizado com onchange) -->
-                <div class="form-group">
-                    <label for="paymentMethod">Forma de Pagamento</label>
-                    <select id="paymentMethod" class="form-control" required onchange="verificarPix()">
-                        <option value="" disabled selected>Como deseja pagar?</option>
-                        <option value="Pix">Pix (Aprovação Instantânea)</option>
-                        <option value="Cartão de Crédito">Cartão de Crédito (Na entrega)</option>
-                        <option value="Cartão de Débito">Cartão de Débito (Na entrega)</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                    </select>
-                </div>
-
-                <!-- NOVO: Área PIX (Escondida por padrão) -->
-                <div id="areaPix" class="form-group" style="display: none; background: #e6f7ff; padding: 15px; border-radius: 8px; border: 1px dashed #0099ff; text-align: center; margin-bottom: 15px;">
-                    <h4 style="color: #005c99; font-weight: bold; margin-bottom: 10px;">Realize o Pagamento PIX</h4>
-                    <p style="margin: 5px 0; color: #333;">Chave PIX (Celular): <strong>12996353271</strong></p>
-                    <p style="margin: 5px 0; color: #333;">Nome: Baratella Pizzaria</p>
-                    <p style="font-size: 1.2rem; color: #b30000; font-weight: bold; margin: 10px 0;">
-                        Valor exato: R$ <span id="valorPixExibicao">0,00</span>
-                    </p>
-                    <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
-                        * Faça o pagamento no seu banco e clique em "Fazer Pedido". O preparo inicia após a confirmação no caixa.
-                    </p>
-                </div>
-
-                <!-- NOVO: Observações -->
-                <div class="form-group">
-                    <label for="pizzaObservacao">Observações (Opcional)</label>
-                    <textarea id="pizzaObservacao" class="form-control" rows="2" placeholder="Ex: Tirar cebola, troco para 50..."></textarea>
-                </div>
-
-                <!-- NOVO: Total Dinâmico -->
-                <div class="form-group" style="text-align: center; margin: 25px 0;">
-                    <h3 style="color: #b30000; font-weight: bold; font-size: 1.4rem;">
-                        Total a Pagar: R$ <span id="valorTotalExibicao">0,00</span>
-                    </h3>
-                </div>
-
-                <!-- Botão de Envio (Mantido) -->
-                <button type="submit" class="btn btn-checkout">
-                    <span>Fazer Pedido</span>
-                </button>
-            </form>
-        </div>
-    </div>
-</section>
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -8,20 +8,47 @@ const statusConexaoEl = document.getElementById('status-conexao');
 
 function tocarAlarme() {
     try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!audioCtx) return; // Se não clicou no botão, não faz nada
+        
         const oscillator = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+        
+        // Define o volume do bipe
+        gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+        
         oscillator.connect(gainNode);
         gainNode.connect(audioCtx.destination);
         oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.5);
+        oscillator.stop(audioCtx.currentTime + 0.5); // Toca por meio segundo
     } catch (e) {
-        console.log("Áudio bloqueado.");
+        console.log("Áudio bloqueado ou erro ao tocar.");
     }
 }
+// Variável global para guardar o contexto de áudio
+let audioCtx = null;
 
+function desbloquearSom() {
+    // Inicia o sistema de áudio após o clique do utilizador
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    // Toca um bipe "mudo" e ultra-rápido só para o navegador perceber que o utilizador autorizou o som
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0; // Volume zero
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.1);
+
+    // Muda o visual do botão para verde
+    const btnSom = document.getElementById('btn-som');
+    btnSom.innerHTML = "🔊 Som Ativado";
+    btnSom.className = "bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium text-sm transition";
+}
 async function carregarPedidos() {
     const { data, error } = await supabaseClient
         .from('pedidos')

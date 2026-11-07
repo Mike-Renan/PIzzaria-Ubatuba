@@ -76,9 +76,12 @@ async function carregarPedidos() {
     renderizarPedidos(pedidosAtuais);
 }
 
+// Função que desenha os cartões de pedido na tela do caixa
 function renderizarPedidos(pedidos) {
+    const listaPedidosEl = document.getElementById('lista-pedidos'); // Certifique-se que o ID bate com o seu HTML principal
+    
     if (!pedidos || pedidos.length === 0) {
-        listaPedidosEl.innerHTML = '<p class="text-gray-500 text-center py-10 bg-white rounded-lg shadow">Nenhum pedido pendente no momento...</p>';
+        listaPedidosEl.innerHTML = '<p class="text-gray-500 text-center py-10 bg-white rounded-lg shadow">Nenhum pedido em andamento...</p>';
         return;
     }
     
@@ -87,16 +90,22 @@ function renderizarPedidos(pedidos) {
     
     pedidos.forEach((pedido, index) => {
         const card = document.createElement('div');
-        card.className = 'bg-white p-5 rounded-lg shadow border-l-4 border-red-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-4';
+        
+        // Muda a cor da borda lateral do cartão dependendo do status atual
+        let corBorda = 'border-red-500'; // pendente (Padrão)
+        if(pedido.status === 'preparando') corBorda = 'border-blue-500';
+        if(pedido.status === 'entrega') corBorda = 'border-purple-500';
+
+        card.className = `bg-white p-5 rounded-lg shadow border-l-4 ${corBorda} flex flex-col md:flex-row justify-between items-start md:items-center gap-4`;
         
         const numeroDiario = totalPedidos - index;
         
-        // Proteções caso a coluna ainda não exista em pedidos antigos
         const borda = pedido.borda && pedido.borda !== 'Sem Borda' ? `<br>🧀 <b>Borda:</b> ${pedido.borda}` : '';
         const bebida = pedido.bebida && pedido.bebida !== 'Sem Bebida' ? `<br>🥤 <b>Bebida:</b> ${pedido.bebida}` : '';
         const obs = pedido.observacao && pedido.observacao !== 'Nenhuma' ? `<br>⚠️ <b>Obs:</b> ${pedido.observacao}` : '';
         const valorFormatado = pedido.valor_total ? parseFloat(pedido.valor_total).toFixed(2).replace('.', ',') : '0,00';
         
+        // Montagem do HTML de cada cartão
         card.innerHTML = 
             '<div>' +
                 '<div class="flex items-center gap-2">' +
@@ -109,19 +118,41 @@ function renderizarPedidos(pedidos) {
                 '<p class="text-red-600 font-bold mt-1">💰 Total: R$ ' + valorFormatado + '</p>' +
                 '<div class="bg-gray-50 p-3 rounded mt-3 text-sm text-gray-800 border">' +
                     '<strong>Itens do Pedido:</strong><br>' + 
-                    (pedido.quantidade || '1') + 'x ' + (pedido.sabor || '') +
-                    borda +
-                    bebida +
-                    obs +
+                    (pedido.quantidade || '1') + 'x ' + (pedido.sabor || '') + borda + bebida + obs +
                 '</div>' +
             '</div>' +
+            
+            // ==========================================
+            // ÁREA DOS BOTÕES LATERAIS E MUDANÇA DE STATUS
+            // ==========================================
             '<div class="flex flex-col gap-2 w-full md:w-auto">' +
+                
+                // CAIXA DE SELEÇÃO DO STATUS DO PEDIDO (Novo)
+                '<select onchange="atualizarStatusPedido(' + pedido.id + ', this.value)" class="p-2 border border-gray-300 rounded font-bold text-sm bg-gray-50 mb-2 outline-none cursor-pointer">' +
+                    '<option value="pendente" ' + (pedido.status === 'pendente' ? 'selected' : '') + '>⏳ Pendente / Recebido</option>' +
+                    '<option value="preparando" ' + (pedido.status === 'preparando' ? 'selected' : '') + '>🍕 Em Preparação</option>' +
+                    '<option value="entrega" ' + (pedido.status === 'entrega' ? 'selected' : '') + '>🛵 Saiu para Entrega</option>' +
+                '</select>' +
+                
+                // BOTÕES ORIGINAIS DE IMPRESSÃO E CONCLUSÃO
                 '<button class="btn-imp bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded text-sm transition shadow">🖨️ Imprimir Comanda</button>' +
                 '<button class="btn-concluir bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded text-sm transition shadow">✅ Concluir / Finalizar</button>' +
             '</div>';
 
-        card.querySelector('.btn-imp').onclick = () => imprimirPedido(pedido, numeroDiario);
-        card.querySelector('.btn-concluir').onclick = () => concluirPedido(pedido.id);
+        // Atribuição de eventos de clique para os botões do cartão
+        const btnImp = card.querySelector('.btn-imp');
+        if(btnImp) {
+            btnImp.onclick = () => {
+                if(typeof imprimirPedido === 'function') imprimirPedido(pedido, numeroDiario);
+            };
+        }
+
+        const btnConcluir = card.querySelector('.btn-concluir');
+        if(btnConcluir) {
+            btnConcluir.onclick = () => {
+                if(typeof concluirPedido === 'function') concluirPedido(pedido.id);
+            };
+        }
 
         listaPedidosEl.appendChild(card);
     });
@@ -192,6 +223,18 @@ async function concluirPedido(id) {
         alert('Erro ao concluir pedido.'); 
     } else { 
         carregarPedidos(); 
+    }
+}
+// Função para o funcionário mudar o status (Pendente -> Preparando -> Entrega)
+async function atualizarStatusPedido(id, novoStatus) {
+    const { error } = await supabaseClient
+        .from('pedidos')
+        .update({ status: novoStatus })
+        .eq('id', id);
+        
+    if (error) {
+        console.error('Erro ao mudar status:', error);
+        alert('Erro de conexão ao tentar atualizar o pedido.');
     }
 }
 

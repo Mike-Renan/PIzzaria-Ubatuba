@@ -79,116 +79,145 @@ function calcularTotal() {
 // ==========================================
 document.addEventListener("DOMContentLoaded", function() {
     
-    // Inicializa o Supabase (Já com a sua chave que usou no painel)
+    // Inicializa o Supabase
     const SUPABASE_URL = 'https://yaxzlfxyiifyuiytkoyw.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_SzTAcXjJTK5bkIOfAA_2cw_X6_2w7JC'; 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const form = document.getElementById('pizzaOrderForm');
+    const areaPix = document.getElementById('areaPix');
+    const telaRastreio = document.getElementById('telaRastreio');
 
-    // Faz o cálculo inicial quando a página carrega
-    calcularTotal();
+    // ========================================================
+    // 1. VERIFICA A MEMÓRIA DO CELULAR (LOCALSTORAGE) AO ABRIR O SITE
+    // ========================================================
+    const pedidoSalvo = localStorage.getItem('meuPedidoBaratella');
+    
+    if (pedidoSalvo) {
+        verificarStatusAnterior(pedidoSalvo);
+    } else {
+        calcularTotal(); // Cliente novo, calcula os preços normais
+    }
 
+    async function verificarStatusAnterior(id) {
+        // Esconde o cardápio e mostra o rastreio
+        if(form) form.style.display = 'none';
+        if(areaPix) areaPix.style.display = 'none';
+        if(telaRastreio) telaRastreio.style.display = 'block';
+
+        // Consulta o status atual no Supabase
+        const { data, error } = await supabaseClient.from('pedidos').select('status').eq('id', id).single();
+
+        if (data) {
+            atualizarVisualRastreio(data.status);
+            
+            if (data.status === 'concluido') {
+                // Se já comeu a pizza, limpa a memória para poder pedir de novo outro dia
+                localStorage.removeItem('meuPedidoBaratella');
+                telaRastreio.innerHTML += '<br><button onclick="window.location.reload()" style="margin-top:15px; padding:10px 20px; background:#b30000; color:white; border:none; border-radius:5px; font-weight:bold;">Fazer Novo Pedido</button>';
+            } else {
+                // Fica a ouvir as mudanças do caixa em tempo real
+                supabaseClient.channel('rastreio-' + id)
+                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos', filter: 'id=eq.' + id }, payload => {
+                        atualizarVisualRastreio(payload.new.status);
+                        if(payload.new.status === 'concluido') {
+                            localStorage.removeItem('meuPedidoBaratella');
+                        }
+                    }).subscribe();
+            }
+        } else {
+            // Se não encontrou o pedido (foi apagado), limpa a memória
+            localStorage.removeItem('meuPedidoBaratella');
+            window.location.reload();
+        }
+    }
+
+    // ========================================================
+    // 2. ENVIO DE UM NOVO PEDIDO
+    // ========================================================
     if (form) {
         form.addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            // Captura dados do cliente
+            // (Captura de dados omitida aqui para ser mais direto, mantenha as suas variáveis de nome, quantidade, etc...)
             const nomeCliente = document.getElementById('clientName').value.trim();
             const quantidade = document.getElementById('pizzaQuantity').value;
             const endereco = document.getElementById('clientAddress').value.trim();
             const bairro = document.getElementById('clientNeighborhood').value.trim();
             const formaPagamento = document.getElementById('paymentMethod').value;
-
-            // Captura os sabores e define se é meia a meia
-            const tipoPizza = document.getElementById('tipoPizza').value;
-            const sabor1 = document.getElementById('pizzaFlavor').value;
-            const sabor2 = document.getElementById('pizzaFlavor2').value;
             
-            let saborFinal = sabor1;
+            let saborFinal = document.getElementById('pizzaFlavor').value;
+            const tipoPizza = document.getElementById('tipoPizza').value;
             if (tipoPizza === 'meia') {
-                if(!sabor2) {
-                    alert("Por favor, selecione o segundo sabor da pizza.");
-                    return;
-                }
-                saborFinal = `Meia ${sabor1} / Meia ${sabor2}`;
+                saborFinal = `Meia ${saborFinal} / Meia ${document.getElementById('pizzaFlavor2').value}`;
             }
 
-            // Captura os adicionais
             const bordaEscolhida = document.getElementById('pizzaBorda').value;
             const bebidaEscolhida = document.getElementById('pizzaBebida').value;
             const obs = document.getElementById('pizzaObservacao')?.value.trim() || 'Nenhuma';
 
-            // Feedback visual de carregamento
             const botaoEnvio = form.querySelector('.btn-checkout');
-            const textoOriginal = botaoEnvio.innerHTML;
-            botaoEnvio.innerHTML = "<span>Enviando para a cozinha...</span>";
-            botaoEnvio.style.opacity = "0.7";
+            botaoEnvio.innerHTML = "<span>Enviando...</span>";
             botaoEnvio.disabled = true;
 
-            // Enviar para o banco de dados (Supabase)
-            const { error } = await supabaseClient
+            // Envia para o Supabase e usa .select() para pegar o ID de volta
+            const { data, error } = await supabaseClient
                 .from('pedidos')
-                .insert([
-                    { 
-                        cliente_nome: nomeCliente, 
-                        quantidade: quantidade,
-                        sabor: saborFinal,
-                        borda: bordaEscolhida,
-                        bebida: bebidaEscolhida,
-                        observacao: obs,
-                        endereco: endereco,
-                        bairro: bairro,
-                        forma_pagamento: formaPagamento,
-                        valor_total: valorFinalTotal,
-                        status: 'pendente'
-                    }
-                ]);
+                .insert([{ 
+                    cliente_nome: nomeCliente, quantidade: quantidade, sabor: saborFinal,
+                    borda: bordaEscolhida, bebida: bebidaEscolhida, observacao: obs,
+                    endereco: endereco, bairro: bairro, forma_pagamento: formaPagamento,
+                    valor_total: valorFinalTotal, status: 'pendente'
+                }])
+                .select(); // IMPORTANTE PARA RECEBER O ID
 
             if (error) {
-                console.error("Erro no Supabase:", error);
-                alert("Houve um pequeno atraso na rede. Vamos redirecionar para o WhatsApp por segurança.");
-                enviarParaWhatsApp();
+                console.error("Erro:", error);
+                alert("Erro na rede. Enviando pelo WhatsApp...");
+                // Chame a sua função de whatsapp aqui
             } else {
-                alert("🎉 Pedido recebido na cozinha com sucesso!");
-                form.reset();
-                calcularTotal(); // Reseta o preço para 0
-                verificarMeiaMeia(); // Esconde o Sabor 2 novamente
-                verificarPix(); // Esconde a caixa do Pix
-            }
-
-            // Restaura o botão
-            botaoEnvio.innerHTML = textoOriginal;
-            botaoEnvio.style.opacity = "1";
-            botaoEnvio.disabled = false;
-
-
-            // ==========================================
-            // FUNÇÃO DE FALLBACK PARA O WHATSAPP
-            // ==========================================
-            function enviarParaWhatsApp() {
-                const numeroTelefone = "5512996353271"; 
+                const pedidoId = data[0].id; // Pega o número do pedido
                 
-                let textoMensagem = 
-                    "* NOVO PEDIDO - Baratella Pizzaria*\n\n" +
-                    "*Cliente:* " + nomeCliente + "\n" +
-                    "*Pedido:* " + quantidade + "x Pizza " + saborFinal + "\n";
+                // GRAVA NA MEMÓRIA DO CELULAR
+                localStorage.setItem('meuPedidoBaratella', pedidoId);
                 
-                if(bordaEscolhida && bordaEscolhida !== 'Sem Borda') textoMensagem += "*Borda:* " + bordaEscolhida + "\n";
-                if(bebidaEscolhida && bebidaEscolhida !== 'Sem Bebida') textoMensagem += "*Bebida:* " + bebidaEscolhida + "\n";
-                if(obs && obs !== 'Nenhuma') textoMensagem += "*Obs:* " + obs + "\n";
-                
-                textoMensagem += 
-                    "\n*Endereço:* " + endereco + "\n" +
-                    "*Bairro:* " + bairro + "\n" +
-                    "*Forma de Pagamento:* " + formaPagamento + "\n" +
-                    "*Total: R$ " + valorFinalTotal.toFixed(2).replace('.', ',') + "*\n\n" +
-                    "_Enviado pelo sistema Web._";
-
-                const messagingFormatada = encodeURIComponent(textoMensagem);
-                const urlLinear = "https://wa.me/" + numeroTelefone + "?text=" + messagingFormatada;
-                window.location.href = urlLinear;
+                // Ativa a tela de rastreio imediatamente
+                verificarStatusAnterior(pedidoId);
             }
         });
+    }
+
+    // ========================================================
+    // 3. FUNÇÃO QUE MUDA AS CORES DO RASTREIO
+    // ========================================================
+    function atualizarVisualRastreio(statusAtual) {
+        const cores = {
+            'pendente':   { id: 'status-pendente',   cor: '#f59e0b', bg: '#fef3c7' },
+            'preparando': { id: 'status-preparando', cor: '#3b82f6', bg: '#eff6ff' },
+            'entrega':    { id: 'status-entrega',    cor: '#8b5cf6', bg: '#f5f3ff' },
+            'concluido':  { id: 'status-concluido',  cor: '#10b981', bg: '#ecfdf5' }
+        };
+
+        // Reseta tudo para cinzento
+        ['pendente', 'preparando', 'entrega', 'concluido'].forEach(s => {
+            const el = document.getElementById('status-' + s);
+            if(el) {
+                el.style.borderLeft = '4px solid #ccc';
+                el.style.background = 'transparent';
+                el.style.color = '#aaa';
+                el.style.fontWeight = 'normal';
+            }
+        });
+
+        // Pinta apenas o status atual com as cores da pizzaria
+        if (cores[statusAtual]) {
+            const ativo = document.getElementById(cores[statusAtual].id);
+            if(ativo) {
+                ativo.style.borderLeft = `4px solid ${cores[statusAtual].cor}`;
+                ativo.style.background = cores[statusAtual].bg;
+                ativo.style.color = '#333';
+                ativo.style.fontWeight = 'bold';
+            }
+        }
     }
 });

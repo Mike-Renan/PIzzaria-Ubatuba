@@ -342,7 +342,35 @@
                     <button type="submit" class="btn btn-checkout">
                         <span>Fazer Pedido</span>
                     </button>
-                </form>
+                    </form>
+                    <!-- TELA DE RASTREIO (Fica escondida até o pedido ser feito ou recuperado da memória) -->
+                    <div id="telaRastreio"
+                        style="display: none; text-align: center; padding: 30px 15px; background: #fff; border-radius: 8px; border: 1px solid #eee; margin-top: 20px;">
+                        <h2 style="color: #b30000; font-size: 1.6rem; font-weight: bold; margin-bottom: 10px;">Pedido Confirmado! 🎉</h2>
+                        <p style="color: #666; margin-bottom: 25px;">Acompanhe o status da sua pizza em tempo real:</p>
+                    
+                        <div style="display: flex; flex-direction: column; gap: 15px; max-width: 350px; margin: 0 auto; text-align: left;">
+                            <div id="status-pendente"
+                                style="padding: 12px; border-left: 4px solid #f59e0b; background: #fef3c7; font-weight: bold; color: #333; border-radius: 0 4px 4px 0;">
+                                ⏳ Pedido Recebido pelo Restaurante
+                            </div>
+                            <div id="status-preparando"
+                                style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
+                                🍕 Em Preparação (Forno)
+                            </div>
+                            <div id="status-entrega"
+                                style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
+                                🛵 Saiu para Entrega / Pronta para Retirar
+                            </div>
+                            <div id="status-concluido"
+                                style="padding: 12px; border-left: 4px solid #ccc; background: transparent; color: #aaa; font-weight: normal; border-radius: 0 4px 4px 0; transition: all 0.3s;">
+                                ✅ Pedido Concluído. Bom Apetite!
+                            </div>
+                        </div>
+                    
+                        <p style="font-size: 0.85rem; color: #999; margin-top: 25px;">* Pode fechar o site e voltar mais tarde. O seu status
+                            ficará salvo aqui!</p>
+                    </div>
             </div>
         </div>
     </section>

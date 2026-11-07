@@ -200,38 +200,34 @@
                 <span class="section-tag">Rápido e Prático</span>
                 <h2 class="section-title">Finalize seu Pedido</h2>
             </div>
+<div class="checkout-box">
+    <form id="pizzaOrderForm">
 
-            <div class="checkout-box">
-                <form id="pizzaOrderForm">
+        <!-- Nome do Cliente (Mantido) -->
+        <div class="form-group">
+            <label for="clientName">Seu Nome Completo</label>
+            <input type="text" id="clientName" class="form-control" placeholder="Ex: Maria Silva" required>
+        </div>
 
-                    <!-- Nome do Cliente (Mantido) -->
-                    <div class="form-group">
-                        <label for="clientName">Seu Nome Completo</label>
-                        <input type="text" id="clientName" class="form-control" placeholder="Ex: Maria Silva" required>
-                    </div>
+<!-- Quantidade de Pizzas -->
+<div class="form-group">
+    <label for="pizzaQuantity">Quantidade de Pizzas</label>
+    <input type="number" id="pizzaQuantity" class="form-control" min="1" max="20" value="1">
+</div>
 
-                    <!-- Quantidade (Atualizado com onchange para calcular valor total) -->
-                    <div class="form-group">
-                        <label for="pizzaQuantity">Quantidade</label>
-                        <select id="pizzaQuantity" class="form-control" required onchange="calcularTotal()">
-                            <option value="1" selected>1 Pizza</option>
-                            <option value="2">2 Pizzas</option>
-                            <option value="3">3 Pizzas</option>
-                            <option value="4">4 Pizzas</option>
-                            <option value="5">5 Pizzas</option>
-                        </select>
-                    </div>
-
-                    <!-- NOVO: Tipo de Pizza -->
+<!-- Onde os blocos de sabor clonados do seu formato vão entrar -->
+<div id="containerSaboresDinamicos"></div>
+<!-- 
+                    NOVO: Tipo de Pizza
                     <div class="form-group">
                         <label for="tipoPizza">Tipo de Pizza</label>
                         <select id="tipoPizza" class="form-control" onchange="verificarMeiaMeia()">
                             <option value="inteira">Pizza Inteira (1 Sabor)</option>
                             <option value="meia">Meia a Meia (2 Sabores)</option>
                         </select>
-                    </div>
+                    </div> -->
 
-                    <!-- Sabor 1 / Inteira (Adaptado com os seus sabores e data-preco) -->
+                     <!-- --><!-- Sabor 1 / Inteira (Adaptado com os seus sabores e data-preco)
                     <div class="form-group">
                         <label for="pizzaFlavor" id="labelSabor1">Sabor da Pizza (Ou Sabor 1)</label>
                         <select id="pizzaFlavor" class="form-control" required onchange="calcularTotal()">
@@ -248,8 +244,8 @@
                         </select>
                     </div>
 
-                    <!-- Sabor 2 (Escondido por padrão) -->
-                    <div class="form-group" id="divSabor2" style="display: none;">
+                    Sabor 2 (Escondido por padrão) -->
+                    <!-- <div class="form-group" id="divSabor2" style="display: none;">
                         <label for="pizzaFlavor2">Sabor 2 (Metade)</label>
                         <select id="pizzaFlavor2" class="form-control" onchange="calcularTotal()">
                             <option value="" data-preco="0" disabled selected>Escolha o segundo sabor...</option>
@@ -263,7 +259,7 @@
                             <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
                             <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
                         </select>
-                    </div>
+                    </div> -->
 
                     <!-- NOVO: Borda -->
                     <div class="form-group">

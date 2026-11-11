@@ -1,5 +1,48 @@
 // ==========================================
-// 1. LÓGICA DE EXIBIÇÃO E CÁLCULO DE PREÇOS
+// 1. TABELA DE TAXAS DE ENTREGA (UBATUBA)
+// ==========================================
+const tabelaTaxasEntrega = {
+    "ipiranguinha": 5,
+    "vale sol": 5,
+    "parque ministerios": 6,
+    "morro das mocas": 7,
+    "cachoeira macacos": 8,
+    "cach macacos p final": 10,
+    "figueira": 10,
+    "colonia": 15,
+    "cdhu": 6,
+    "marafunda": 7,
+    "bela vista": 7,
+    "mato dentro": 8,
+    "jd carolina": 7,
+    "monte valerio": 10,
+    "ressaca": 10,
+    "centro": 10,
+    "silop": 10,
+    "umuarama": 10,
+    "sumare": 10,
+    "anchieta": 10,
+    "estufa 1": 10,
+    "estufa 2": 10,
+    "itagua": 10,
+    "pq vivamar": 10,
+    "praia grande": 15,
+    "tenorio": 15,
+    "acarau": 10,
+    "pedreira alta": 10,
+    "pedreira bx": 10,
+    "pereque acu": 10,
+    "taquaral": 13,
+    "angelin": 13
+};
+
+// Função auxiliar para normalizar o texto (retira acentos e deixa minúsculo)
+function normalizarTexto(texto) {
+    return texto ? texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
+}
+
+// ==========================================
+// 2. LÓGICA DE EXIBIÇÃO E CÁLCULO DE PREÇOS
 // ==========================================
 
 function verificarPix() {
@@ -16,6 +59,7 @@ function verificarPix() {
 }
 
 let valorFinalTotal = 0;
+let taxaEntregaAtual = 0;
 
 // Atalho de segurança global
 function calcularTotal() {
@@ -29,7 +73,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const containerSabores = document.getElementById('containerSaboresDinamicos');
     const selectBorda = document.getElementById('pizzaBorda');
     const selectBebida = document.getElementById('pizzaBebida');
-    const spanTotal = document.getElementById('valorTotalExibicao'); // ID corrigido conforme o seu HTML!
+    const inputBairro = document.getElementById('clientNeighborhood');
+    const spanTotal = document.getElementById('valorTotalExibicao'); 
     const exibicaoPix = document.getElementById('valorPixExibicao');
 
     // Catálogo de sabores com preços exatos
@@ -110,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
         calcularTotalGeral();
     }
 
-    // Função principal de cálculo do total
+    // Função principal de cálculo do total (incluindo subtotal de pizzas, bordas, bebidas e taxa de entrega)
     window.calcularTotalGeral = function() {
         let subtotalPizzas = 0;
         
@@ -148,7 +193,16 @@ document.addEventListener("DOMContentLoaded", function() {
             precoBebida = parseFloat(selectBebida.options[selectBebida.selectedIndex].getAttribute('data-preco')) || 0;
         }
 
-        valorFinalTotal = subtotalPizzas + precoBorda + precoBebida;
+        // Calcula a taxa de entrega com base no bairro digitado
+        taxaEntregaAtual = 0;
+        if (inputBairro) {
+            const bairroDigitado = normalizarTexto(inputBairro.value);
+            if (tabelaTaxasEntrega.hasOwnProperty(bairroDigitado)) {
+                taxaEntregaAtual = tabelaTaxasEntrega[bairroDigitado];
+            }
+        }
+
+        valorFinalTotal = subtotalPizzas + precoBorda + precoBebida + taxaEntregaAtual;
         window.valorFinalTotal = valorFinalTotal;
 
         if (spanTotal) {
@@ -166,11 +220,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (selectBorda) selectBorda.addEventListener('change', calcularTotalGeral);
     if (selectBebida) selectBebida.addEventListener('change', calcularTotalGeral);
+    if (inputBairro) inputBairro.addEventListener('input', calcularTotalGeral);
 });
 
 
 // ==========================================
-// 2. ENVIO PARA O SUPABASE E RASTREIO
+// 3. ENVIO PARA O SUPABASE E RASTREIO
 // ==========================================
 document.addEventListener("DOMContentLoaded", function() {
     const SUPABASE_URL = 'https://yaxzlfxyiifyuiytkoyw.supabase.co';
@@ -263,6 +318,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     observacao: obs,
                     endereco: endereco, 
                     bairro: bairro, 
+                    taxa_entrega: taxaEntregaAtual, // Grava a taxa calculada
                     forma_pagamento: formaPagamento,
                     valor_total: valorFinalTotal, 
                     status: 'pendente'

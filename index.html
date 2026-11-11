@@ -41,31 +41,50 @@
                 </div>
                 <div class="about-text">
                     <span class="section-tag">Tradição & Família</span>
-                    <h2 class="section-title">Nossa História, Seu Momento</h2>
-                    <p>Fundada por apaixonados pela gastronomia italiana, a Bella Vita une ingredientes rigorosamente
-                        selecionados a processos artesanais de longa fermentação.</p>
-                    <p>Queremos que cada fatia seja uma extensão da sua melhor experiência de viagem: relaxante,
-                        memorável e recheada de sabor.</p>
+                    <h2 class="section-title">A HISTÓRIA DA PIZZARIA BARATELLA UM SONHO QUE VIROU REALIDADE!</h2>
+                    <p> Toda grande história começa com um sonho… E a nossa começou com a paixão por pizza!
+        
+                        Era uma vez um homem apaixonado por pizza. Mais do que gostar de saborear uma boa pizza, ele sempre teve
+                        um sonho no coração: ter seu próprio comércio, construir algo com suas próprias mãos e oferecer às
+                        pessoas um produto feito com carinho e dedicação.
+        
+                        Esse sonho foi crescendo junto com a vontade de vencer e conquistar seu próprio espaço. Foram muitos
+                        pensamentos, planos, desafios e a esperança de um dia tirar esse desejo do papel.
+        
+                        E foi assim que, há apenas um mês, aquele sonho finalmente se tornou realidade: nasceu a Pizzaria
+                        Baratella!</p>
                 </div>
             </div>
         </div>
-    </section>
+        </section>
 
     <section class="flavors" id="flavors">
         <div class="container">
             <div class="text-center">
                 <span class="section-tag">Menu Selecionado</span>
                 <h2 class="section-title">Nossos Sabores Exclusivos</h2>
+                <!-- Seção do Cardápio Visual Oficial -->
+                <div class="cardapio-visual-container" style="max-width: 600px; margin: 0 auto 30px auto; text-align: center;">
+                    <h2 style="color: #b30000; margin-bottom: 20px; font-weight: bold;">Nosso Cardápio Oficial 2026</h2>
+                
+                    <!-- Imagem das Pizzas Salgadas -->
+                    <img src="./img/cardapio-salgadas.png" alt="Cardápio Pizzas Salgadas Baratella"
+                        style="width: 100%; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 20px;">
+                
+                    <!-- Imagem das Pizzas Doces e Bebidas -->
+                    <img src="./img/cardapio-doces-bebidas.png" alt="Cardápio Pizzas Doces e Bebidas Baratella"
+                        style="width: 100%; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                </div>
             </div>
 
             <div class="flavors-grid">
                 <!-- Sabor 1 -->
                 <div class="flavor-card">
-                    <img src="./img/marga.jpg" alt="Pizza Margherita" class="flavor-img">
+                    <img src="./img/alho.jpeg" alt="Pizza Alho" class="flavor-img">
                     <div class="flavor-info">
                         <div class="flavor-header">
-                            <h3 class="flavor-title">Margherita Clássica</h3>
-                            <span class="flavor-price">R$ 52</span>
+                            <h3 class="flavor-title">alho</h3>
+                            <span class="flavor-price">R$ 30</span>
                         </div>
                         <p class="flavor-description">Molho de tomate artesanal, mozzarella di bufala fatiada,
                             manjericão fresco e um fio de azeite extravirgem.</p>
@@ -266,20 +285,30 @@
                         <label for="pizzaBorda">Borda Recheada?</label>
                         <select id="pizzaBorda" class="form-control" onchange="calcularTotal()">
                             <option value="Sem Borda" data-preco="0">Tradicional (Sem Borda) - Grátis</option>
-                            <option value="Borda de Catupiry" data-preco="10">Borda de Catupiry - R$ 10,00</option>
-                            <option value="Borda de Cheddar" data-preco="10">Borda de Cheddar - R$ 10,00</option>
+                            <option value="Catupiry" data-preco="15">Borda de Catupiry - R$ 15,00</option>
+                            <option value="Cheddar" data-preco="15">Borda de Cheddar - R$ 15,00</option>
+                            <option value="Chocolate" data-preco="15">Borda de Chocolate - R$ 15,00</option>
+                            <option value="Mussarela" data-preco="20">Borda de Mussarela - R$ 20,00</option>
                         </select>
                     </div>
 
                     <!-- NOVO: Bebidas -->
-                    <div class="form-group">
-                        <label for="pizzaBebida">Bebidas</label>
-                        <select id="pizzaBebida" class="form-control" onchange="calcularTotal()">
-                            <option value="Sem Bebida" data-preco="0">Sem Bebida</option>
-                            <option value="Coca-Cola 2L" data-preco="14">Coca-Cola 2L - R$ 14,00</option>
-                            <option value="Guaraná 2L" data-preco="12">Guaraná Antarctica 2L - R$ 12,00</option>
-                        </select>
-                    </div>
+            <div class="form-group">
+                <label for="pizzaBebida">Bebidas</label>
+                <select id="pizzaBebida" class="form-control" onchange="calcularTotal()">
+                    <option value="Sem Bebida" data-preco="0">Sem Bebida</option>
+                    <option value="Coca-Cola 2L" data-preco="20">Coca-Cola 2L - R$ 20,00</option>
+                    <option value="Coca-Cola 1L" data-preco="10">Coca-Cola 1L - R$ 10,00</option>
+                    <option value="Coca-Cola Lata" data-preco="8">Coca-Cola Lata - R$ 8,00</option>
+                    <option value="Guaraná 2L" data-preco="15">Guaraná 2L - R$ 15,00</option>
+                    <option value="Guaraná 1L" data-preco="10">Guaraná 1L - R$ 10,00</option>
+                    <option value="Guaraná Lata" data-preco="8">Guaraná Lata - R$ 8,00</option>
+                    <option value="Frutuba 2L" data-preco="10">Frutuba 2L - R$ 10,00</option>
+                    <option value="Cerveja Heineken Lata" data-preco="10">Cerveja Heineken Lata - R$ 10,00</option>
+                    <option value="Cerveja Brahma Lata" data-preco="8">Cerveja Brahma Lata - R$ 8,00</option>
+                    <option value="Suco 1L" data-preco="10">Suco 1L - R$ 10,00</option>
+                </select>
+            </div>
 
                     <!-- Endereço (Mantido) -->
                     <div class="form-group">

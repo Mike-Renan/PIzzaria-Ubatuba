@@ -36,32 +36,96 @@ const tabelaTaxasEntrega = {
     "angelin": 13
 };
 
-// Função auxiliar para normalizar o texto (retira acentos e deixa minúsculo)
 function normalizarTexto(texto) {
     return texto ? texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
 }
 
 // ==========================================
-// 2. LÓGICA DE EXIBIÇÃO E CÁLCULO DE PREÇOS
+// 2. CATÁLOGO OFICIAL 2026 (PIZZAS SALGADAS E DOCES)
 // ==========================================
+const catalogoSabores = [
+    // --- Salgadas R$ 30,00 ---
+    { nome: "Alho (Mussarela, alho)", preco: 30.00 },
+    { nome: "Boris (Presunto, mussarela)", preco: 30.00 },
+    { nome: "Calabresa (Calabresa, cebola)", preco: 30.00 },
+    { nome: "Frango c/ Catupiry (Frango desfiado, catupiry)", preco: 30.00 },
+    { nome: "Marguerita (Mussarela, tomate, manjericão)", preco: 30.00 },
+    { nome: "Milho (Mussarela, milho)", preco: 30.00 },
+    { nome: "Mussarela (Mussarela, Tomate)", preco: 30.00 }, // Ajustado conforme base R$ 30 no bloco esquerdo do cardápio
 
+    // --- Salgadas R$ 34,90 ---
+    { nome: "Palmito 1 (Mussarela, palmito)", preco: 34.90 },
+    { nome: "Pepperoni (Mussarela, pepperoni)", preco: 34.90 },
+    { nome: "Baiana (Mussarela, calabresa, cebola, ovo, pimenta)", preco: 34.90 },
+    { nome: "A Moda da Casa (Calabresa, mussarela, milho, ovo)", preco: 34.90 },
+    { nome: "Paulista (Atum, ervilha, cebola, mussarela)", preco: 34.90 },
+    { nome: "Toscana (Calabresa, cebola, mussarela)", preco: 34.90 },
+    { nome: "Bacon 2 (Mussarela, catupiry, bacon, milho)", preco: 34.90 },
+    { nome: "Portuguesa (Presunto, mussarela, ervilha, ovo, cebola)", preco: 34.90 },
+    { nome: "Fransbacon (Frango desfiado, catupiry, bacon)", preco: 34.90 },
+    { nome: "Frango com Mussarela (Frango desfiado, mussarela)", preco: 34.90 },
+    { nome: "Lombo (Lombo fatiado, catupiry, cebola)", preco: 34.90 },
+    { nome: "Caipira 1 (Frango desfiado, bacon, milho, catupiry)", preco: 34.90 },
+    { nome: "Brócolis (Mussarela, brócolis, bacon, alho)", preco: 34.90 },
+    { nome: "Jardineira (Presunto, cebola, ervilha, ovo, palmito, mussarela)", preco: 34.90 },
+    { nome: "Atum (Mussarela, atum, cebola)", preco: 34.90 },
+
+    // --- Salgadas R$ 39,90 ---
+    { nome: "Pepperoni 2 (Mussarela, pepperoni, catupiry)", preco: 39.90 },
+    { nome: "Baratella Especial (Mussarela, catupiry, bacon, tomate, cebola, champion)", preco: 39.90 },
+    { nome: "Mineirinha (Calabresa, catupiry, bacon, milho)", preco: 39.90 },
+    { nome: "Caiçara (Calabresa, frango desfiado, catupiry e bacon)", preco: 39.90 },
+    { nome: "Palmito 2 (Catupiry, palmito, bacon)", preco: 39.90 },
+    { nome: "Três Queijos (Mussarela, catupiry, parmesão)", preco: 39.90 },
+
+    // --- Salgadas R$ 45,00 ---
+    { nome: "Quatro Queijos (Catupiry, gorgonzola, parmesão, mussarela, provolone)", preco: 45.00 },
+    { nome: "Caipira 2 (Frango desfiado, bacon, milho, cheddar)", preco: 45.00 },
+
+    // --- Salgadas R$ 55,00 ---
+    { nome: "Cinco Queijos (Mussarela, catupiry, parmesão, provolone e gorgonzola)", preco: 55.00 },
+
+    // --- Salgadas R$ 59,90 ---
+    { nome: "Contra Filé (Mussarela, contra filé, cebola, pasta de alho)", preco: 59.90 },
+    { nome: "Temaki (Atum, cream cheese, cebolinha, gergelim)", preco: 59.90 },
+
+    // --- Doces R$ 37,90 ---
+    { nome: "Brigadeiro (Chocolate, granulado)", preco: 37.90 },
+    { nome: "Chocolate (Chocolate)", preco: 37.90 },
+    { nome: "Paçoca com Chocolate (Paçoca, chocolate)", preco: 37.90 },
+    { nome: "Prestígio (Chocolate, coco ralado)", preco: 37.90 },
+    { nome: "Romeu e Julieta (Mussarela e goiabada)", preco: 37.90 },
+
+    // --- Doces R$ 44,90 ---
+    { nome: "Confete (Chocolate, confete colorido)", preco: 44.90 },
+
+    // --- Doces R$ 49,90 ---
+    { nome: "Banoffe (Banana, doce de leite e canela)", preco: 49.90 },
+    { nome: "Banana Nevada (Banana, chocolate branco, mussarela, canela)", preco: 49.90 },
+    { nome: "Morango com Chocolate (Morango e chocolate)", preco: 49.90 },
+    { nome: "Uva com Chocolate (Chocolate e uva verde)", preco: 49.90 },
+    { nome: "Chocobranco (Chocolate preto e chocolate branco)", preco: 49.90 },
+    { nome: "Marshmalow (Chocolate preto, marshmalow e confete)", preco: 49.90 },
+
+    // --- Doces R$ 55,00 ---
+    { nome: "Oreo (Chocolate preto, bolacha Oreo e chocolate branco)", preco: 55.00 }
+];
+
+// ==========================================
+// 3. LÓGICA DE EXIBIÇÃO E CÁLCULO DE PREÇOS
+// ==========================================
 function verificarPix() {
     const metodo = document.getElementById('paymentMethod')?.value;
     const areaPix = document.getElementById('areaPix');
     
     if (areaPix) {
-        if (metodo === 'Pix') {
-            areaPix.style.display = 'block';
-        } else {
-            areaPix.style.display = 'none';
-        }
+        areaPix.style.display = (metodo === 'Pix') ? 'block' : 'none';
     }
 }
 
 let valorFinalTotal = 0;
 let taxaEntregaAtual = 0;
 
-// Atalho de segurança global
 function calcularTotal() {
     if (typeof calcularTotalGeral === 'function') {
         calcularTotalGeral();
@@ -78,19 +142,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const exibicaoPix = document.getElementById('valorPixExibicao');
     const spanTaxaVisual = document.getElementById('textoTaxaEntrega');
 
-    // Catálogo de sabores com preços exatos
-    const catalogoSabores = [
-        { nome: "Margherita Clássica", preco: 52 },
-        { nome: "Diavola (Pepperoni)", preco: 58 },
-        { nome: "Quattro Formaggi", preco: 62 },
-        { nome: "Frango Premium", preco: 56 },
-        { nome: "Calabresa Defumada", preco: 54 },
-        { nome: "Parma e Rúcula", preco: 68 },
-        { nome: "Funghi Trufado", preco: 72 },
-        { nome: "Brigadeiro Gourmet", preco: 48 },
-        { nome: "Mussarela", preco: 48 }
-    ];
-
     function gerarCamposDeSabores() {
         if (!containerSabores || !inputQuantidade) return;
         
@@ -104,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             let opcoesHtml = `<option value="" data-preco="0" disabled selected>Escolha um sabor...</option>`;
             catalogoSabores.forEach(s => {
-                opcoesHtml += `<option value="${s.nome}" data-preco="${s.preco}">${s.nome} - R$ ${s.preco},00</option>`;
+                opcoesHtml += `<option value="${s.nome}" data-preco="${s.preco}">${s.nome} - R$ ${s.preco.toFixed(2).replace('.', ',')}</option>`;
             });
 
             wrapper.innerHTML = `
@@ -156,7 +207,6 @@ document.addEventListener("DOMContentLoaded", function() {
         calcularTotalGeral();
     }
 
-    // Função principal de cálculo do total (incluindo subtotal de pizzas, bordas, bebidas e taxa de entrega)
     window.calcularTotalGeral = function() {
         let subtotalPizzas = 0;
         
@@ -177,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (select2 && select2.selectedIndex > 0) {
                         preco2 = parseFloat(select2.options[select2.selectedIndex].getAttribute('data-preco')) || 0;
                     }
-                    subtotalPizzas += Math.max(preco1, preco2); // Regra comercial: cobra o maior valor
+                    subtotalPizzas += Math.max(preco1, preco2); 
                 } else {
                     subtotalPizzas += preco1;
                 }
@@ -194,7 +244,6 @@ document.addEventListener("DOMContentLoaded", function() {
             precoBebida = parseFloat(selectBebida.options[selectBebida.selectedIndex].getAttribute('data-preco')) || 0;
         }
 
-        // Calcula a taxa de entrega com base no bairro digitado
         taxaEntregaAtual = 0;
         if (inputBairro) {
             const bairroDigitado = normalizarTexto(inputBairro.value);
@@ -213,7 +262,6 @@ document.addEventListener("DOMContentLoaded", function() {
             exibicaoPix.innerText = valorFinalTotal.toFixed(2).replace('.', ',');
         }
 
-        // Atualiza o texto visual da taxa de entrega abaixo do total
         if (spanTaxaVisual) {
             if (taxaEntregaAtual > 0) {
                 spanTaxaVisual.innerHTML = `Taxa de entrega: <strong>R$ ${taxaEntregaAtual.toFixed(2).replace('.', ',')}</strong>`;
@@ -243,7 +291,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 // ==========================================
-// 3. ENVIO PARA O SUPABASE E RASTREIO
+// 4. ENVIO PARA O SUPABASE E RASTREIO
 // ==========================================
 document.addEventListener("DOMContentLoaded", function() {
     const SUPABASE_URL = 'https://yaxzlfxyiifyuiytkoyw.supabase.co';
@@ -298,7 +346,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const bairro = document.getElementById('clientNeighborhood').value.trim();
             const formaPagamento = document.getElementById('paymentMethod').value;
             
-            // Varre todas as pizzas geradas no ecrã para montar o texto final dos sabores
             let saboresArray = [];
             if (containerSabores) {
                 const blocos = containerSabores.querySelectorAll('.bloco-pizza-item');
@@ -336,7 +383,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     observacao: obs,
                     endereco: endereco, 
                     bairro: bairro, 
-                    taxa_entrega: taxaEntregaAtual, // Grava a taxa calculada
+                    taxa_entrega: taxaEntregaAtual, 
                     forma_pagamento: formaPagamento,
                     valor_total: valorFinalTotal, 
                     status: 'pendente'

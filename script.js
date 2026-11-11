@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const inputBairro = document.getElementById('clientNeighborhood');
     const spanTotal = document.getElementById('valorTotalExibicao'); 
     const exibicaoPix = document.getElementById('valorPixExibicao');
+    const spanTaxaVisual = document.getElementById('textoTaxaEntrega');
 
     // Catálogo de sabores com preços exatos
     const catalogoSabores = [
@@ -210,6 +211,23 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         if (exibicaoPix) {
             exibicaoPix.innerText = valorFinalTotal.toFixed(2).replace('.', ',');
+        }
+
+        // Atualiza o texto visual da taxa de entrega abaixo do total
+        if (spanTaxaVisual) {
+            if (taxaEntregaAtual > 0) {
+                spanTaxaVisual.innerHTML = `Taxa de entrega: <strong>R$ ${taxaEntregaAtual.toFixed(2).replace('.', ',')}</strong>`;
+                spanTaxaVisual.style.color = "#333";
+            } else {
+                const bairroDigitado = inputBairro ? inputBairro.value.trim() : "";
+                if (bairroDigitado === "") {
+                    spanTaxaVisual.innerHTML = `Digite o bairro para calcular a taxa de entrega`;
+                    spanTaxaVisual.style.color = "#888";
+                } else {
+                    spanTaxaVisual.innerHTML = `Taxa de entrega: <strong>Grátis / A combinar</strong>`;
+                    spanTaxaVisual.style.color = "#27ae60";
+                }
+            }
         }
     }
 

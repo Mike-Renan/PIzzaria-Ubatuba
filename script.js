@@ -7,6 +7,7 @@ const tabelaTaxasEntrega = {
     "parque ministerios": 6,
     "morro das mocas": 7,
     "cachoeira macacos": 8,
+    "Ca honorários macacos": 10,
     "cach macacos p final": 10,
     "figueira": 10,
     "colonia": 15,
@@ -29,11 +30,13 @@ const tabelaTaxasEntrega = {
     "praia grande": 15,
     "tenorio": 15,
     "acarau": 10,
+    "usina velha": 10,
     "pedreira alta": 10,
     "pedreira bx": 10,
     "pereque acu": 10,
-    "taquaral": 13,
-    "angelin": 13
+    "taquaral": 15,
+    "angelin": 15
+    
 };
 
 function normalizarTexto(texto) {

@@ -337,33 +337,55 @@ document.addEventListener("DOMContentLoaded", function() {
         if(areaPix) areaPix.style.display = 'none';
         if(telaRastreio) telaRastreio.style.display = 'block';
 
-        // ATUALIZAÇÃO: Buscamos também o 'numero_diario' no Supabase
+        // Busca o status e o número diário no Supabase
         const { data } = await supabaseClient.from('pedidos').select('status, numero_diario').eq('id', id).single();
 
         if (data) {
             atualizarVisualRastreio(data.status);
             
-            // EXIBE O NÚMERO DO PEDIDO NA TELA DO CLIENTE
+            // Exibe o número do pedido na tela do cliente
             const spanNumCliente = document.getElementById('numeroPedidoCliente');
             if (spanNumCliente && data.numero_diario) {
                 spanNumCliente.innerText = `#` + data.numero_diario;
             }
             
+            // Se já abrir a tela com o pedido concluído
             if (data.status === 'concluido') {
                 localStorage.removeItem('meuPedidoBaratella');
-                telaRastreio.innerHTML += '<br><button onclick="window.location.reload()" style="margin-top:15px; padding:10px 20px; background:#b30000; color:white; border:none; border-radius:5px; font-weight:bold;">Fazer Novo Pedido</button>';
+                
+                // Adiciona o botão de novo pedido se ele já não existir na tela
+                if (!document.getElementById('btnNovoPedido')) {
+                    telaRastreio.innerHTML += `
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p style="color: #10b981; font-weight: bold; margin-bottom: 10px;">O seu pedido foi entregue com sucesso! Bom apetite!</p>
+                            <button id="btnNovoPedido" onclick="localStorage.removeItem('meuPedidoBaratella'); window.location.reload();" style="padding: 12px 24px; background: #b30000; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;">Fazer Novo Pedido</button>
+                        </div>
+                    `;
+                }
             } else {
+                // Escuta em tempo real as atualizações daquele pedido específico
                 supabaseClient.channel('rastreio-' + id)
                     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos', filter: 'id=eq.' + id }, payload => {
-                        atualizarVisualRastreio(payload.new.status);
+                        const novoStatus = payload.new.status;
+                        atualizarVisualRastreio(novoStatus);
                         
-                        // Atualiza também via Realtime caso mude
                         if (spanNumCliente && payload.new.numero_diario) {
                             spanNumCliente.innerText = `#` + payload.new.numero_diario;
                         }
 
-                        if(payload.new.status === 'concluido') {
+                        // QUANDO A PIZZARIA CLICAR EM CONCLUIR NO PAINEL:
+                        if(novoStatus === 'concluido') {
                             localStorage.removeItem('meuPedidoBaratella');
+                            
+                            // Mostra o botão instantaneamente na tela do cliente sem precisar dar F5
+                            if (!document.getElementById('btnNovoPedido')) {
+                                telaRastreio.innerHTML += `
+                                    <div style="text-align: center; margin-top: 20px;">
+                                        <p style="color: #10b981; font-weight: bold; margin-bottom: 10px;">O seu pedido foi entregue com sucesso! Bom apetite!</p>
+                                        <button id="btnNovoPedido" onclick="localStorage.removeItem('meuPedidoBaratella'); window.location.reload();" style="padding: 12px 24px; background: #b30000; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;">Fazer Novo Pedido</button>
+                                    </div>
+                                `;
+                            }
                         }
                     }).subscribe();
             }

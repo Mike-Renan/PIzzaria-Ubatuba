@@ -4,7 +4,7 @@
 const tabelaTaxasEntrega = {
     "ipiranguinha": 5,
     "vale sol": 5,
-    "parque ministerios": 6,
+    "parque dos ministerios": 6,
     "morro das mocas": 7,
     "cachoeira macacos": 8,
     "Ca honorários macacos": 10,

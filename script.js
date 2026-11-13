@@ -51,7 +51,7 @@ const catalogoSabores = [
     { nome: "Frango c/ Catupiry (Frango desfiado, catupiry)", preco: 30.00 },
     { nome: "Marguerita (Mussarela, tomate, manjericão)", preco: 30.00 },
     { nome: "Milho (Mussarela, milho)", preco: 30.00 },
-    { nome: "Mussarela (Mussarela, Tomate)", preco: 30.00 }, // Ajustado conforme base R$ 30 no bloco esquerdo do cardápio
+    { nome: "Mussarela (Mussarela, Tomate)", preco: 30.00 },
 
     // --- Salgadas R$ 34,90 ---
     { nome: "Palmito 1 (Mussarela, palmito)", preco: 34.90 },
@@ -79,7 +79,7 @@ const catalogoSabores = [
     { nome: "Três Queijos (Mussarela, catupiry, parmesão)", preco: 39.90 },
 
     // --- Salgadas R$ 45,00 ---
-    { nome: "Quatro Queijos (Catupiry, gorgonzola, parmesão, mussarela, provolone)", preco: 45.00 },
+    { nome: "Quatro Queijos (Catupiry, gorgonzola, parmesão, mussarela,)", preco: 45.00 },
     { nome: "Caipira 2 (Frango desfiado, bacon, milho, cheddar)", preco: 45.00 },
 
     // --- Salgadas R$ 55,00 ---
@@ -180,6 +180,20 @@ document.addEventListener("DOMContentLoaded", function() {
                         ${opcoesHtml}
                     </select>
                 </div>
+
+                <!-- CAMPO DE BORDA INDIVIDUAL -->
+                <div class="form-group" style="margin-top: 15px;">
+                    <label style="font-weight: bold; color: #555;">Borda da Pizza${sufixo}</label>
+                    <select class="form-control borda-indiv" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+                        <option value="Sem Borda" data-preco="0">Tradicional (Sem Borda) - Grátis</option>
+                        <option value="Catupiry" data-preco="15">Borda de Catupiry - R$ 15,00</option>
+                        <option value="Cheddar" data-preco="15">Borda de Cheddar - R$ 15,00</option>
+                        <option value="Chocolate" data-preco="15">Borda de Chocolate - R$ 15,00</option>
+                        <option value="Mussarela" data-preco="20">Borda de Mussarela - R$ 20,00</option>
+                    </select>
+                </div>
+                <!-- FIM DO CAMPO DE BORDA -->
+
                 <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ddd;">
             `;
 
@@ -187,6 +201,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const divSabor2 = wrapper.querySelector('.div-sabor-2');
             const selectSabor1 = wrapper.querySelector('.sabor-1');
             const selectSabor2 = wrapper.querySelector('.sabor-2');
+            const selectBorda = wrapper.querySelector('.borda-indiv');
 
             selectTipo.addEventListener('change', (e) => {
                 if (e.target.value === 'meia') {
@@ -200,6 +215,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             selectSabor1.addEventListener('change', calcularTotalGeral);
             selectSabor2.addEventListener('change', calcularTotalGeral);
+            selectBorda.addEventListener('change', calcularTotalGeral);
 
             containerSabores.appendChild(wrapper);
         }
@@ -234,10 +250,14 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        let precoBorda = 0;
-        if (selectBorda && selectBorda.selectedIndex > 0) {
-            precoBorda = parseFloat(selectBorda.options[selectBorda.selectedIndex].getAttribute('data-preco')) || 0;
-        }
+        let totalBordas = 0;
+        const selectsBorda = document.querySelectorAll('.borda-indiv');
+        selectsBorda.forEach(select => {
+            if (select.options.length > 0 && select.selectedIndex >= 0) {
+                const precoOpcao = parseFloat(select.options[select.selectedIndex].getAttribute('data-preco')) || 0;
+                totalBordas += precoOpcao;
+            }
+        });
 
         let precoBebida = 0;
         if (selectBebida && selectBebida.selectedIndex > 0) {
@@ -252,7 +272,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        valorFinalTotal = subtotalPizzas + precoBorda + precoBebida + taxaEntregaAtual;
+        // CORREÇÃO AQUI: Substituída a variável antiga 'precoBorda' por 'totalBordas'
+        valorFinalTotal = subtotalPizzas + totalBordas + precoBebida + taxaEntregaAtual;
         window.valorFinalTotal = valorFinalTotal;
 
         if (spanTotal) {
@@ -313,10 +334,17 @@ document.addEventListener("DOMContentLoaded", function() {
         if(areaPix) areaPix.style.display = 'none';
         if(telaRastreio) telaRastreio.style.display = 'block';
 
-        const { data } = await supabaseClient.from('pedidos').select('status').eq('id', id).single();
+        // ATUALIZAÇÃO: Buscamos também o 'numero_diario' no Supabase
+        const { data } = await supabaseClient.from('pedidos').select('status, numero_diario').eq('id', id).single();
 
         if (data) {
             atualizarVisualRastreio(data.status);
+            
+            // EXIBE O NÚMERO DO PEDIDO NA TELA DO CLIENTE
+            const spanNumCliente = document.getElementById('numeroPedidoCliente');
+            if (spanNumCliente && data.numero_diario) {
+                spanNumCliente.innerText = `#` + data.numero_diario;
+            }
             
             if (data.status === 'concluido') {
                 localStorage.removeItem('meuPedidoBaratella');
@@ -325,6 +353,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 supabaseClient.channel('rastreio-' + id)
                     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos', filter: 'id=eq.' + id }, payload => {
                         atualizarVisualRastreio(payload.new.status);
+                        
+                        // Atualiza também via Realtime caso mude
+                        if (spanNumCliente && payload.new.numero_diario) {
+                            spanNumCliente.innerText = `#` + payload.new.numero_diario;
+                        }
+
                         if(payload.new.status === 'concluido') {
                             localStorage.removeItem('meuPedidoBaratella');
                         }
@@ -347,22 +381,31 @@ document.addEventListener("DOMContentLoaded", function() {
             const formaPagamento = document.getElementById('paymentMethod').value;
             
             let saboresArray = [];
+            let bordasArray = []; 
+            
             if (containerSabores) {
                 const blocos = containerSabores.querySelectorAll('.bloco-pizza-item');
                 blocos.forEach((bloco, index) => {
                     const tipo = bloco.querySelector('.tipo-pizza-indiv').value;
                     const s1 = bloco.querySelector('.sabor-1').value;
+                    
+                    const selectBorda = bloco.querySelector('.borda-indiv');
+                    const bordaIndiv = selectBorda ? selectBorda.value : 'Sem Borda';
+
                     if (tipo === 'meia') {
                         const s2 = bloco.querySelector('.sabor-2').value;
                         saboresArray.push(`Pizza ${index+1}: Meia ${s1} / Meia ${s2}`);
                     } else {
                         saboresArray.push(`Pizza ${index+1}: ${s1}`);
                     }
+                    
+                    bordasArray.push(`Pizza ${index+1}: ${bordaIndiv}`);
                 });
             }
+            
             const saborFinal = saboresArray.join(' | ');
+            const bordaFinal = bordasArray.join(' | '); 
 
-            const bordaEscolhida = document.getElementById('pizzaBorda').value;
             const bebidaEscolhida = document.getElementById('pizzaBebida').value;
             const obs = document.getElementById('pizzaObservacao')?.value.trim() || 'Nenhuma';
 
@@ -372,13 +415,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 botaoEnvio.disabled = true;
             }
 
+            const dataHoje = new Date().toISOString().split('T')[0];
+            const { count, error: erroCount } = await supabaseClient
+                .from('pedidos')
+                .select('*', { count: 'exact', head: true })
+                .gte('created_at', dataHoje + 'T00:00:00Z');
+
+            const proximoNumero = (count || 0) + 1;
+
             const { data, error } = await supabaseClient
                 .from('pedidos')
                 .insert([{ 
                     cliente_nome: nomeCliente, 
                     quantidade: quantidade, 
                     sabor: saborFinal,
-                    borda: bordaEscolhida, 
+                    borda: bordaFinal, 
                     bebida: bebidaEscolhida, 
                     observacao: obs,
                     endereco: endereco, 
@@ -386,7 +437,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     taxa_entrega: taxaEntregaAtual, 
                     forma_pagamento: formaPagamento,
                     valor_total: valorFinalTotal, 
-                    status: 'pendente'
+                    status: 'pendente',
+                    numero_diario: proximoNumero
                 }])
                 .select();
 

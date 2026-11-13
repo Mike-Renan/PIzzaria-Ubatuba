@@ -68,7 +68,7 @@
                     <h2 style="color: #b30000; margin-bottom: 20px; font-weight: bold;">Nosso Cardápio Oficial 2026</h2>
                 
                     <!-- Imagem das Pizzas Salgadas -->
-                    <img src="./img/cardapio-salgadas.png" alt="Cardápio Pizzas Salgadas Baratella"
+                    <img src="./img/card2026.jpeg" alt="Cardápio Pizzas Salgadas Baratella"
                         style="width: 100%; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 20px;">
                 
                     <!-- Imagem das Pizzas Doces e Bebidas -->
@@ -278,19 +278,20 @@
                             <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
                             <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
                         </select>
-                    </div> -->
-
-                    <!-- NOVO: Borda -->
-                    <div class="form-group">
-                        <label for="pizzaBorda">Borda Recheada?</label>
-                        <select id="pizzaBorda" class="form-control" onchange="calcularTotal()">
-                            <option value="Sem Borda" data-preco="0">Tradicional (Sem Borda) - Grátis</option>
-                            <option value="Catupiry" data-preco="15">Borda de Catupiry - R$ 15,00</option>
-                            <option value="Cheddar" data-preco="15">Borda de Cheddar - R$ 15,00</option>
-                            <option value="Chocolate" data-preco="15">Borda de Chocolate - R$ 15,00</option>
-                            <option value="Mussarela" data-preco="20">Borda de Mussarela - R$ 20,00</option>
-                        </select>
-                    </div>
+                        </div> -->
+                        
+                        <!-- NOVO: Borda -->
+                        <!-- Adicione isto dentro da div .bloco-pizza-item de cada pizza -->
+                        <!-- <div class="form-group" style="margin-top: 10px;">
+                            <label>Borda da Pizza <span class="numero-pizza-label"></span></label>
+                            <select class="form-control borda-indiv" onchange="calcularTotal()">
+                                <option value="Sem Borda" data-preco="0">Tradicional (Sem Borda) - Grátis</option>
+                                <option value="Catupiry" data-preco="15">Borda de Catupiry - R$ 15,00</option>
+                                <option value="Cheddar" data-preco="15">Borda de Cheddar - R$ 15,00</option>
+                                <option value="Chocolate" data-preco="15">Borda de Chocolate - R$ 15,00</option>
+                                <option value="Mussarela" data-preco="20">Borda de Mussarela - R$ 20,00</option>
+                            </select>
+                        </div> -->
 
                     <!-- NOVO: Bebidas -->
             <div class="form-group">
@@ -378,6 +379,7 @@
                     style="display: none; text-align: center; padding: 30px 15px; background: #fff; border-radius: 8px; border: 1px solid #eee; margin-top: 20px;">
                     <h2 style="color: #b30000; font-size: 1.6rem; font-weight: bold; margin-bottom: 10px;">Pedido
                         Confirmado! 🎉</h2>
+                    <p class="text-lg font-semibold text-red-600 mb-4">Número do seu Pedido: <span id="numeroPedidoCliente" class="text-3xl font-extrabold">#--</span></p>
                     <p style="color: #666; margin-bottom: 25px;">Acompanhe o status da sua pizza em tempo real:</p>
 
                     <div

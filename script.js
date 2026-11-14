@@ -16,7 +16,7 @@ const tabelaTaxasEntrega = {
     "bela vista": 7,
     "mato dentro": 8,
     "jd carolina": 7,
-    "monte valerio": 10,
+    "monte valerio": 13,
     "ressaca": 10,
     "centro": 10,
     "silop": 10,

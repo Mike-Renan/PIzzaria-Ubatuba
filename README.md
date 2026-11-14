@@ -21,7 +21,7 @@ Sistema completo de ponto de venda (PDV) e delivery em tempo real desenvolvido p
 - **Endereço:** Rua Cascata, 930, Ubatuba - SP, CEP 11693-056
 
 ## 🔗 Links de Acesso (Produção)
-- **Site do Cliente:** [https://mike-renan.github.io/PIzzaria-Ubatuba/](https://mike-renan.github.io/PIzzaria-Ubatuba/)
+- **Site do Cliente:** [[https://mike-renan.github.io/PIzzaria-Ubatuba/](https://mike-renan.github.io/PIzzaria-Ubatuba/)](https://pizzariabaratella.com.br)
 - **Painel do Caixa:** [https://mike-renan.github.io/PIzzaria-******************)
 
 ---

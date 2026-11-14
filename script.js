@@ -3,14 +3,14 @@
 // ==========================================
 const tabelaTaxasEntrega = {
     "ipiranguinha": 5,
-    "vale sol": 5,
+    "vale do sol": 5,
     "parque dos ministerios": 6,
     "morro das mocas": 7,
-    "cachoeira macacos": 8,
-    "Ca honorários macacos": 10,
-    "cach macacos p final": 10,
+    "cachoeira dos macacos": 10,
     "figueira": 10,
     "colonia": 15,
+    "emdurb": 10,
+    "sitieto": 15,
     "cdhu": 6,
     "marafunda": 7,
     "bela vista": 7,
@@ -30,13 +30,13 @@ const tabelaTaxasEntrega = {
     "praia grande": 15,
     "tenorio": 15,
     "acarau": 10,
-    "usina velha": 10,
     "pedreira alta": 10,
-    "pedreira bx": 10,
+    "pedreira baixa": 10,
     "pereque acu": 10,
-    "taquaral": 15,
-    "angelin": 15
-    
+    "taquaral": 13,
+    "angelin": 13,
+    "usina velha": 10,
+    "sesmaria": 15
 };
 
 function normalizarTexto(texto) {
@@ -225,8 +225,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         calcularTotalGeral();
     }
-
-    window.calcularTotalGeral = function() {
+window.calcularTotalGeral = function() {
         let subtotalPizzas = 0;
         
         if (containerSabores) {
@@ -267,15 +266,19 @@ document.addEventListener("DOMContentLoaded", function() {
             precoBebida = parseFloat(selectBebida.options[selectBebida.selectedIndex].getAttribute('data-preco')) || 0;
         }
 
+        // CÁLCULO DA TAXA DE ENTREGA CORRIGIDO E BLINDADO
         taxaEntregaAtual = 0;
         if (inputBairro) {
             const bairroDigitado = normalizarTexto(inputBairro.value);
-            if (tabelaTaxasEntrega.hasOwnProperty(bairroDigitado)) {
+            
+            // Verifica se o texto digitado bate com a tabela ou contém variações da Cachoeira dos Macacos
+            if (bairroDigitado.includes("cachoeira") && bairroDigitado.includes("macacos")) {
+                taxaEntregaAtual = 10;
+            } else if (tabelaTaxasEntrega.hasOwnProperty(bairroDigitado)) {
                 taxaEntregaAtual = tabelaTaxasEntrega[bairroDigitado];
             }
         }
 
-        // CORREÇÃO AQUI: Substituída a variável antiga 'precoBorda' por 'totalBordas'
         valorFinalTotal = subtotalPizzas + totalBordas + precoBebida + taxaEntregaAtual;
         window.valorFinalTotal = valorFinalTotal;
 
@@ -400,25 +403,35 @@ document.addEventListener("DOMContentLoaded", function() {
             event.preventDefault();
 
             const nomeCliente = document.getElementById('clientName').value.trim();
+            const telefoneCliente = document.getElementById('clientPhone')?.value.trim() || ''; // Captura o telefone do cliente
             const quantidade = document.getElementById('pizzaQuantity').value;
             const endereco = document.getElementById('clientAddress').value.trim();
             const bairro = document.getElementById('clientNeighborhood').value.trim();
             const formaPagamento = document.getElementById('paymentMethod').value;
             
-            let saboresArray = [];
+         let saboresArray = [];
             let bordasArray = []; 
             
             if (containerSabores) {
                 const blocos = containerSabores.querySelectorAll('.bloco-pizza-item');
                 blocos.forEach((bloco, index) => {
                     const tipo = bloco.querySelector('.tipo-pizza-indiv').value;
-                    const s1 = bloco.querySelector('.sabor-1').value;
+                    
+                    // Pega o valor selecionado (ex: "Calabresa (Calabresa, cebola)")
+                    const selectS1 = bloco.querySelector('.sabor-1');
+                    let s1Completo = selectS1.options[selectS1.selectedIndex].value;
+                    
+                    // EXTRAI APENAS O NOME (Remove tudo o que estiver a partir do parêntese)
+                    let s1 = s1Completo.split('(')[0].trim();
                     
                     const selectBorda = bloco.querySelector('.borda-indiv');
                     const bordaIndiv = selectBorda ? selectBorda.value : 'Sem Borda';
 
                     if (tipo === 'meia') {
-                        const s2 = bloco.querySelector('.sabor-2').value;
+                        const selectS2 = bloco.querySelector('.sabor-2');
+                        let s2Completo = selectS2.options[selectS2.selectedIndex].value;
+                        let s2 = s2Completo.split('(')[0].trim(); // Extrai apenas o nome do segundo sabor também
+                        
                         saboresArray.push(`Pizza ${index+1}: Meia ${s1} / Meia ${s2}`);
                     } else {
                         saboresArray.push(`Pizza ${index+1}: ${s1}`);
@@ -452,6 +465,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .from('pedidos')
                 .insert([{ 
                     cliente_nome: nomeCliente, 
+                    telefone: telefoneCliente, // Envia o telefone para o Supabase
                     quantidade: quantidade, 
                     sabor: saborFinal,
                     borda: bordaFinal, 

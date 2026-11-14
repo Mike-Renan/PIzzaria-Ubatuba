@@ -79,7 +79,7 @@ window.carregarPedidosAtivos = async function() {
         }
         return;
     }
-// LÓGICA DE RECONTAGEM: Filtra apenas os pedidos feitos APÓS zerar
+    // LÓGICA DE RECONTAGEM: Filtra apenas os pedidos feitos APÓS zerar
     const dataLimite = new Date(dataUltimoZerar);
     const pedidosAtuais = pedidos.filter(pedido => new Date(pedido.created_at) > dataLimite);
     
@@ -210,11 +210,12 @@ window.renderizarHistoricoAgrupado = function(pedidos) {
             // Aqui garantimos que o Histórico usa o novo número (ou o ID como segurança)
             const numeroComanda = pedido.numero_diario || pedido.id;
 
-            card.innerHTML = `
+           card.innerHTML = `
                 <div class="w-[75%]">
                     <span class="font-bold text-gray-700">Comanda #${numeroComanda}</span> 
                     <span class="text-xs text-gray-500 ml-2">🕒 ${hora}</span>
                     <p class="text-sm text-gray-800 mt-1 truncate">👤 <strong>${pedido.cliente_nome || 'N/D'}</strong> | 📍 ${pedido.bairro || 'N/D'}</p>
+                    <p class="text-sm text-gray-700 mt-1">📞 Telefone: <strong>${pedido.telefone || 'Não informado'}</strong></p>
                     <p class="text-xs text-gray-600 mt-1 truncate">🍕 ${pedido.sabor}</p>
                 </div>
                 <div class="text-right w-[25%]">
@@ -266,6 +267,7 @@ function renderizarPedidos(pedidos) {
                     '<span class="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded">' + new Date(pedido.created_at).toLocaleTimeString() + '</span>' +
                 '</div>' +
                 '<p class="text-gray-700 font-semibold mt-1">👤 Cliente: ' + (pedido.cliente_nome || 'Não informado') + '</p>' +
+                '<p class="text-gray-700 text-sm mt-1">📞 Telefone: <strong>' + (pedido.telefone || 'Não informado') + '</strong></p>' + // <--- TELEFONE INCLUÍDO AQUI NOS ATIVOS
                 '<p class="text-gray-600 text-sm mt-1">📍 Endereço: ' + (pedido.endereco || '') + ' - Bairro: ' + (pedido.bairro || '') + '</p>' +
                 '<p class="text-gray-600 text-sm mt-1">💳 Pagamento: ' + (pedido.forma_pagamento || '') + '</p>' +
                 '<p class="text-red-600 font-bold mt-1">💰 Total: R$ ' + valorFormatado + '</p>' +
@@ -295,6 +297,7 @@ function renderizarPedidos(pedidos) {
         listaPedidosEl.appendChild(card);
     }); 
 }
+
 // ==========================================
 // FUNÇÕES DE AÇÃO (ATUALIZAR, CONCLUIR E IMPRIMIR)
 // ==========================================
@@ -357,6 +360,7 @@ function imprimirPedido(pedido, numeroDiario) {
             "<p>Data: " + new Date().toLocaleString() + "</p>" +
             "<div class='divider'></div>" +
             "<p><b>Cliente:</b> " + (pedido.cliente_nome || 'Balcão') + "</p>" +
+            "<p><b>Telefone:</b> " + (pedido.telefone || 'Não informado') + "</p>" +
             "<p><b>Endereço:</b> " + (pedido.endereco || '') + "</p>" +
             "<p><b>Bairro:</b> " + (pedido.bairro || '') + "</p>" +
             "<div class='divider'></div>" +

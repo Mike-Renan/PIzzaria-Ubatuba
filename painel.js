@@ -368,13 +368,12 @@ function imprimirPedido(pedido, numeroDiario) {
             let pedacosSabor = quebrarTexto(textoSabor, larguraMaximaLinha);
             pedacosSabor.forEach(p => linhasItens.push(p));
 
+            // Exibe a borda/adicional de cada pizza (mesmo se for Sem Borda)
             if (bordas[index]) {
                 let nomeBorda = bordas[index].includes(':') ? bordas[index].split(':').pop().trim() : bordas[index];
-                if (nomeBorda.toUpperCase() !== 'SEM BORDA' && nomeBorda.toUpperCase() !== 'TRADICIONAL (SEM BORDA) - GRÁTIS') {
-                    let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
-                    let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
-                    pedacosBorda.forEach(p => linhasItens.push(p));
-                }
+                let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
+                let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
+                pedacosBorda.forEach(p => linhasItens.push(p));
             }
             if (index < sabores.length - 1) {
                 linhasItens.push(""); // linha em branco para espaçamento
@@ -386,13 +385,11 @@ function imprimirPedido(pedido, numeroDiario) {
         let pedacosSabor = quebrarTexto(textoSabor, larguraMaximaLinha);
         pedacosSabor.forEach(p => linhasItens.push(p));
 
-        if (pedido.borda && pedido.borda !== 'Sem Borda') {
+        if (pedido.borda) {
             let nomeBorda = pedido.borda.includes(':') ? pedido.borda.split(':').pop().trim() : pedido.borda;
-            if (nomeBorda.toUpperCase() !== 'SEM BORDA') {
-                let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
-                let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
-                pedacosBorda.forEach(p => linhasItens.push(p));
-            }
+            let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
+            let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
+            pedacosBorda.forEach(p => linhasItens.push(p));
         }
     }
 
@@ -444,10 +441,10 @@ function imprimirPedido(pedido, numeroDiario) {
         "<head>" +
             "<meta charset='UTF-8'>" +
             "<style>" +
-                // Adicionado font-weight: bold para deixar todas as letras da comanda em negrito
+                // Garante que absolutamente todo o texto da comanda saia em negrito
                 "body { font-family: 'Courier New', monospace; font-size: 11px; width: 280px; margin: 0; padding: 5px; line-height: 1.15; font-weight: bold; }" +
-                "h2, p { margin: 3px 0; text-align: left; }" +
-                "h2 { text-align: center; margin-bottom: 5px; font-size: 14px; }" +
+                "h2, p { margin: 3px 0; text-align: left; font-weight: bold; }" +
+                "h2 { text-align: center; margin-bottom: 5px; font-size: 14px; font-weight: bold; }" +
                 ".divider { border-bottom: 1px dashed #000; margin: 6px 0; }" +
                 ".box-itens { font-weight: bold; white-space: pre; }" +
             "</style>" +

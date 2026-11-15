@@ -336,34 +336,71 @@ function imprimirPedido(pedido, numeroDiario) {
     
     const valorFormatado = pedido.valor_total ? parseFloat(pedido.valor_total).toFixed(2).replace('.', ',') : '0,00';
 
-    // Organizar cada pizza e seu adicional de forma limpa, linha por linha
+    // Função auxiliar para quebrar textos longos em várias linhas de tamanho máximo
+    function quebrarTexto(texto, tamanhoMax) {
+        let palavras = texto.split(' ');
+        let linhas = [];
+        let linhaAtual = '';
+        
+        palavras.forEach(palavra => {
+            if ((linhaAtual + palavra).length > tamanhoMax) {
+                if (linhaAtual.trim() !== '') linhas.push(linhaAtual.trim());
+                linhaAtual = palavra + ' ';
+            } else {
+                linhaAtual += palavra + ' ';
+            }
+        });
+        if (linhaAtual.trim() !== '') linhas.push(linhaAtual.trim());
+        return linhas;
+    }
+
     let linhasItens = [];
+    const larguraMaximaLinha = 28; // Ajustado para bobinas térmicas de 58mm
     
     if (pedido.sabor && pedido.sabor.includes('|')) {
         let sabores = pedido.sabor.split(' | ');
         let bordas = pedido.borda ? pedido.borda.split(' | ') : [];
         
         sabores.forEach((saborItem, index) => {
-            linhasItens.push(saborItem.toUpperCase());
+            // Remove qualquer prefixo anterior ("Pizza 1:", etc.) para evitar duplicações
+            let saborLimpo = saborItem.replace(/^pizza\s*\d+:\s*/i, '').trim().toUpperCase();
+            let textoSabor = "PIZZA " + (index + 1) + ": " + saborLimpo;
+            let pedacosSabor = quebrarTexto(textoSabor, larguraMaximaLinha);
+            pedacosSabor.forEach(p => linhasItens.push(p));
+
             if (bordas[index]) {
                 let nomeBorda = bordas[index].includes(':') ? bordas[index].split(':').pop().trim() : bordas[index];
-                linhasItens.push("ADICIONAL: " + nomeBorda.toUpperCase());
+                if (nomeBorda.toUpperCase() !== 'SEM BORDA' && nomeBorda.toUpperCase() !== 'TRADICIONAL (SEM BORDA) - GRÁTIS') {
+                    let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
+                    let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
+                    pedacosBorda.forEach(p => linhasItens.push(p));
+                }
             }
             if (index < sabores.length - 1) {
-                linhasItens.push(""); // linha em branco entre pizzas diferentes para respirar o layout
+                linhasItens.push(""); // linha em branco para espaçamento
             }
         });
     } else {
-        linhasItens.push((pedido.quantidade || '1') + "X " + (pedido.sabor || '').toUpperCase());
+        let saborLimpo = (pedido.sabor || '').replace(/^pizza\s*\d+:\s*/i, '').trim().toUpperCase();
+        let textoSabor = (pedido.quantidade || '1') + "X " + saborLimpo;
+        let pedacosSabor = quebrarTexto(textoSabor, larguraMaximaLinha);
+        pedacosSabor.forEach(p => linhasItens.push(p));
+
         if (pedido.borda && pedido.borda !== 'Sem Borda') {
             let nomeBorda = pedido.borda.includes(':') ? pedido.borda.split(':').pop().trim() : pedido.borda;
-            linhasItens.push("ADICIONAL: " + nomeBorda.toUpperCase());
+            if (nomeBorda.toUpperCase() !== 'SEM BORDA') {
+                let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
+                let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
+                pedacosBorda.forEach(p => linhasItens.push(p));
+            }
         }
     }
 
     if (pedido.bebida && pedido.bebida !== 'Sem Bebida') {
         if (linhasItens.length > 0) linhasItens.push("");
-        linhasItens.push("BEBIDA: " + pedido.bebida.toUpperCase());
+        let textoBebida = "BEBIDA: " + pedido.bebida.toUpperCase();
+        let pedacosBebida = quebrarTexto(textoBebida, larguraMaximaLinha);
+        pedacosBebida.forEach(p => linhasItens.push(p));
     }
 
     if (pedido.taxa_entrega && parseFloat(pedido.taxa_entrega) > 0) {
@@ -372,10 +409,12 @@ function imprimirPedido(pedido, numeroDiario) {
 
     if (pedido.observacao && pedido.observacao !== 'Nenhuma') {
         if (linhasItens.length > 0) linhasItens.push("");
-        linhasItens.push("OBS: " + pedido.observacao.toUpperCase());
+        let textoObs = "OBS: " + pedido.observacao.toUpperCase();
+        let pedacosObs = quebrarTexto(textoObs, larguraMaximaLinha);
+        pedacosObs.forEach(p => linhasItens.push(p));
     }
 
-    const larguraCaixa = 38;
+    const larguraCaixa = 30; // Perfeito para impressoras térmicas de 58mm
     
     function criarLinhaCaixa(texto) {
         let textoLimpo = texto.padEnd(larguraCaixa, ' ');
@@ -405,10 +444,11 @@ function imprimirPedido(pedido, numeroDiario) {
         "<head>" +
             "<meta charset='UTF-8'>" +
             "<style>" +
-                "body { font-family: 'Courier New', monospace; font-size: 12px; width: 300px; margin: 0; padding: 10px; line-height: 1.2;font-weight: bold }" +
-                "h2, p { margin: 4px 0; text-align: left; }" +
-                "h2 { text-align: center; margin-bottom: 8px; }" +
-                ".divider { border-bottom: 1px dashed #000; margin: 8px 0; }" +
+                // Adicionado font-weight: bold para deixar todas as letras da comanda em negrito
+                "body { font-family: 'Courier New', monospace; font-size: 11px; width: 280px; margin: 0; padding: 5px; line-height: 1.15; font-weight: bold; }" +
+                "h2, p { margin: 3px 0; text-align: left; }" +
+                "h2 { text-align: center; margin-bottom: 5px; font-size: 14px; }" +
+                ".divider { border-bottom: 1px dashed #000; margin: 6px 0; }" +
                 ".box-itens { font-weight: bold; white-space: pre; }" +
             "</style>" +
         "</head>" +
@@ -427,7 +467,7 @@ function imprimirPedido(pedido, numeroDiario) {
             "<div class='box-itens'>" + htmlItensTexto + "</div>" +
             "<div class='divider'></div>" +
             "<p><b>Forma de Pagamento:</b><br>" + (pedido.forma_pagamento || '') + "</p>" +
-            "<p align='right' style='font-size: 14px;'><b>TOTAL: R$ " + valorFormatado + "</b></p>" +
+            "<p align='right' style='font-size: 13px;'><b>TOTAL: R$ " + valorFormatado + "</b></p>" +
             "<div class='divider'></div>" +
             "<p style='text-align: center;'><i>Impresso via Sistema Web</i></p>" +
         "</body>" +

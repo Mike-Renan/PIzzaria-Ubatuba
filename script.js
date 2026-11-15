@@ -126,6 +126,42 @@ function verificarPix() {
     }
 }
 
+// Função para alternar entre Entrega e Retirada
+window.alternarTipoPedido = function() {
+    const tipoEl = document.querySelector('input[name="tipo_pedido"]:checked');
+    const tipo = tipoEl ? tipoEl.value : 'entrega';
+    const secaoEndereco = document.getElementById('secao-endereco');
+    const inputEndereco = document.getElementById('clientAddress');
+    const inputBairro = document.getElementById('clientNeighborhood');
+
+    if (tipo === 'retirada') {
+        if (secaoEndereco) secaoEndereco.style.display = 'none';
+        if (inputEndereco) {
+            inputEndereco.required = false;
+            inputEndereco.dataset.valorAntigo = inputEndereco.value;
+            inputEndereco.value = 'Retirada no Balcão';
+        }
+        if (inputBairro) {
+            inputBairro.required = false;
+            inputBairro.dataset.valorAntigo = inputBairro.value;
+            inputBairro.value = 'Balcão';
+        }
+    } else {
+        if (secaoEndereco) secaoEndereco.style.display = 'block';
+        if (inputEndereco) {
+            inputEndereco.required = true;
+            inputEndereco.value = inputEndereco.dataset.valorAntigo || '';
+        }
+        if (inputBairro) {
+            inputBairro.required = true;
+            inputBairro.value = inputBairro.dataset.valorAntigo || '';
+        }
+    }
+    if (typeof calcularTotalGeral === 'function') {
+        calcularTotalGeral();
+    }
+};
+
 let valorFinalTotal = 0;
 let taxaEntregaAtual = 0;
 
@@ -204,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const divSabor2 = wrapper.querySelector('.div-sabor-2');
             const selectSabor1 = wrapper.querySelector('.sabor-1');
             const selectSabor2 = wrapper.querySelector('.sabor-2');
-            const selectBorda = wrapper.querySelector('.borda-indiv');
+            const selectBordaIndiv = wrapper.querySelector('.borda-indiv');
 
             selectTipo.addEventListener('change', (e) => {
                 if (e.target.value === 'meia') {
@@ -218,14 +254,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
             selectSabor1.addEventListener('change', calcularTotalGeral);
             selectSabor2.addEventListener('change', calcularTotalGeral);
-            selectBorda.addEventListener('change', calcularTotalGeral);
+            selectBordaIndiv.addEventListener('change', calcularTotalGeral);
 
             containerSabores.appendChild(wrapper);
         }
         
         calcularTotalGeral();
     }
-window.calcularTotalGeral = function() {
+
+    window.calcularTotalGeral = function() {
         let subtotalPizzas = 0;
         
         if (containerSabores) {
@@ -266,12 +303,15 @@ window.calcularTotalGeral = function() {
             precoBebida = parseFloat(selectBebida.options[selectBebida.selectedIndex].getAttribute('data-preco')) || 0;
         }
 
+        // VERIFICA SE É ENTREGA OU RETIRADA
+        const tipoPedidoEl = document.querySelector('input[name="tipo_pedido"]:checked');
+        const tipoPedido = tipoPedidoEl ? tipoPedidoEl.value : 'entrega';
+
         // CÁLCULO DA TAXA DE ENTREGA CORRIGIDO E BLINDADO
         taxaEntregaAtual = 0;
-        if (inputBairro) {
+        if (tipoPedido === 'entrega' && inputBairro) {
             const bairroDigitado = normalizarTexto(inputBairro.value);
             
-            // Verifica se o texto digitado bate com a tabela ou contém variações da Cachoeira dos Macacos
             if (bairroDigitado.includes("cachoeira") && bairroDigitado.includes("macacos")) {
                 taxaEntregaAtual = 10;
             } else if (tabelaTaxasEntrega.hasOwnProperty(bairroDigitado)) {
@@ -290,7 +330,10 @@ window.calcularTotalGeral = function() {
         }
 
         if (spanTaxaVisual) {
-            if (taxaEntregaAtual > 0) {
+            if (tipoPedido === 'retirada') {
+                spanTaxaVisual.innerHTML = `Retirada no Local: <strong>Grátis (R$ 0,00)</strong>`;
+                spanTaxaVisual.style.color = "#27ae60";
+            } else if (taxaEntregaAtual > 0) {
                 spanTaxaVisual.innerHTML = `Taxa de entrega: <strong>R$ ${taxaEntregaAtual.toFixed(2).replace('.', ',')}</strong>`;
                 spanTaxaVisual.style.color = "#333";
             } else {
@@ -304,7 +347,7 @@ window.calcularTotalGeral = function() {
                 }
             }
         }
-    }
+    };
 
     if (inputQuantidade) {
         inputQuantidade.addEventListener('input', gerarCamposDeSabores);
@@ -340,23 +383,19 @@ document.addEventListener("DOMContentLoaded", function() {
         if(areaPix) areaPix.style.display = 'none';
         if(telaRastreio) telaRastreio.style.display = 'block';
 
-        // Busca o status e o número diário no Supabase
         const { data } = await supabaseClient.from('pedidos').select('status, numero_diario').eq('id', id).single();
 
         if (data) {
             atualizarVisualRastreio(data.status);
             
-            // Exibe o número do pedido na tela do cliente
             const spanNumCliente = document.getElementById('numeroPedidoCliente');
             if (spanNumCliente && data.numero_diario) {
                 spanNumCliente.innerText = `#` + data.numero_diario;
             }
             
-            // Se já abrir a tela com o pedido concluído
             if (data.status === 'concluido') {
                 localStorage.removeItem('meuPedidoBaratella');
                 
-                // Adiciona o botão de novo pedido se ele já não existir na tela
                 if (!document.getElementById('btnNovoPedido')) {
                     telaRastreio.innerHTML += `
                         <div style="text-align: center; margin-top: 20px;">
@@ -366,7 +405,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     `;
                 }
             } else {
-                // Escuta em tempo real as atualizações daquele pedido específico
                 supabaseClient.channel('rastreio-' + id)
                     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos', filter: 'id=eq.' + id }, payload => {
                         const novoStatus = payload.new.status;
@@ -376,11 +414,9 @@ document.addEventListener("DOMContentLoaded", function() {
                             spanNumCliente.innerText = `#` + payload.new.numero_diario;
                         }
 
-                        // QUANDO A PIZZARIA CLICAR EM CONCLUIR NO PAINEL:
                         if(novoStatus === 'concluido') {
                             localStorage.removeItem('meuPedidoBaratella');
                             
-                            // Mostra o botão instantaneamente na tela do cliente sem precisar dar F5
                             if (!document.getElementById('btnNovoPedido')) {
                                 telaRastreio.innerHTML += `
                                     <div style="text-align: center; margin-top: 20px;">
@@ -403,13 +439,13 @@ document.addEventListener("DOMContentLoaded", function() {
             event.preventDefault();
 
             const nomeCliente = document.getElementById('clientName').value.trim();
-            const telefoneCliente = document.getElementById('clientPhone')?.value.trim() || ''; // Captura o telefone do cliente
+            const telefoneCliente = document.getElementById('clientPhone')?.value.trim() || ''; 
             const quantidade = document.getElementById('pizzaQuantity').value;
             const endereco = document.getElementById('clientAddress').value.trim();
             const bairro = document.getElementById('clientNeighborhood').value.trim();
             const formaPagamento = document.getElementById('paymentMethod').value;
             
-         let saboresArray = [];
+            let saboresArray = [];
             let bordasArray = []; 
             
             if (containerSabores) {
@@ -417,11 +453,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 blocos.forEach((bloco, index) => {
                     const tipo = bloco.querySelector('.tipo-pizza-indiv').value;
                     
-                    // Pega o valor selecionado (ex: "Calabresa (Calabresa, cebola)")
                     const selectS1 = bloco.querySelector('.sabor-1');
                     let s1Completo = selectS1.options[selectS1.selectedIndex].value;
-                    
-                    // EXTRAI APENAS O NOME (Remove tudo o que estiver a partir do parêntese)
                     let s1 = s1Completo.split('(')[0].trim();
                     
                     const selectBorda = bloco.querySelector('.borda-indiv');
@@ -430,7 +463,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (tipo === 'meia') {
                         const selectS2 = bloco.querySelector('.sabor-2');
                         let s2Completo = selectS2.options[selectS2.selectedIndex].value;
-                        let s2 = s2Completo.split('(')[0].trim(); // Extrai apenas o nome do segundo sabor também
+                        let s2 = s2Completo.split('(')[0].trim();
                         
                         saboresArray.push(`Pizza ${index+1}: Meia ${s1} / Meia ${s2}`);
                     } else {
@@ -465,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .from('pedidos')
                 .insert([{ 
                     cliente_nome: nomeCliente, 
-                    telefone: telefoneCliente, // Envia o telefone para o Supabase
+                    telefone: telefoneCliente, 
                     quantidade: quantidade, 
                     sabor: saborFinal,
                     borda: bordaFinal, 

@@ -78,12 +78,13 @@
                     <!-- Imagem das Pizzas Doces e Bebidas -->
                     <img src="./img/cardapio-doces-bebidas.png" alt="Cardápio Pizzas Doces e Bebidas Baratella"
                         style="width: 100%; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
-                      <br>
+                     <br>
                         <h2 class="section-title">Nossos Sabores Exclusivos</h2>
                     </div>
             </div>
             
-                  
+                
+                
             <div class="flavors-grid">
                
                 <!-- Sabor 1 -->
@@ -225,64 +226,23 @@
 
 <!-- Onde os blocos de sabor clonados do seu formato vão entrar -->
 <div id="containerSaboresDinamicos"></div>
-<!-- 
-                    NOVO: Tipo de Pizza
-                    <div class="form-group">
-                        <label for="tipoPizza">Tipo de Pizza</label>
-                        <select id="tipoPizza" class="form-control" onchange="verificarMeiaMeia()">
-                            <option value="inteira">Pizza Inteira (1 Sabor)</option>
-                            <option value="meia">Meia a Meia (2 Sabores)</option>
-                        </select>
-                    </div> -->
 
-                     <!-- --><!-- Sabor 1 / Inteira (Adaptado com os seus sabores e data-preco)
-                    <div class="form-group">
-                        <label for="pizzaFlavor" id="labelSabor1">Sabor da Pizza (Ou Sabor 1)</label>
-                        <select id="pizzaFlavor" class="form-control" required onchange="calcularTotal()">
-                            <option value="" data-preco="0" disabled selected>Escolha um sabor...</option>
-                            <option value="Margherita Clássica" data-preco="52">Margherita Clássica - R$ 52</option>
-                            <option value="Diavola (Pepperoni)" data-preco="58">Diavola (Pepperoni) - R$ 58</option>
-                            <option value="Quattro Formaggi" data-preco="62">Quattro Formaggi - R$ 62</option>
-                            <option value="Frango Premium" data-preco="56">Frango Premium - R$ 56</option>
-                            <option value="Calabresa Defumada" data-preco="54">Calabresa Defumada - R$ 54</option>
-                            <option value="Parma e Rúcula" data-preco="68">Parma e Rúcula - R$ 68</option>
-                            <option value="Funghi Trufado" data-preco="72">Funghi Trufado - R$ 72</option>
-                            <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
-                            <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
-                        </select>
-                    </div>
+            <!-- NOVO: Escolha do Tipo de Pedido (Entrega ou Retirada) -->
+            <div class="form-group" style="background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #ddd;">
+                <label style="display: block; font-weight: bold; color: #333; margin-bottom: 8px;">📦 Como deseja receber o pedido?</label>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <label style="cursor: pointer; font-weight: 500; display: flex; align-items: center;">
+                        <input type="radio" name="tipo_pedido" value="entrega" checked onchange="alternarTipoPedido()" style="margin-right: 6px;"> 
+                        🛵 Entrega em Domicílio
+                    </label>
+                    <label style="cursor: pointer; font-weight: 500; display: flex; align-items: center;">
+                        <input type="radio" name="tipo_pedido" value="retirada" onchange="alternarTipoPedido()" style="margin-right: 6px;"> 
+                        🏃 Retirar no Local
+                    </label>
+                </div>
+            </div>
 
-                    Sabor 2 (Escondido por padrão) -->
-                    <!-- <div class="form-group" id="divSabor2" style="display: none;">
-                        <label for="pizzaFlavor2">Sabor 2 (Metade)</label>
-                        <select id="pizzaFlavor2" class="form-control" onchange="calcularTotal()">
-                            <option value="" data-preco="0" disabled selected>Escolha o segundo sabor...</option>
-                            <option value="Margherita Clássica" data-preco="52">Margherita Clássica - R$ 52</option>
-                            <option value="Diavola (Pepperoni)" data-preco="58">Diavola (Pepperoni) - R$ 58</option>
-                            <option value="Quattro Formaggi" data-preco="62">Quattro Formaggi - R$ 62</option>
-                            <option value="Frango Premium" data-preco="56">Frango Premium - R$ 56</option>
-                            <option value="Calabresa Defumada" data-preco="54">Calabresa Defumada - R$ 54</option>
-                            <option value="Parma e Rúcula" data-preco="68">Parma e Rúcula - R$ 68</option>
-                            <option value="Funghi Trufado" data-preco="72">Funghi Trufado - R$ 72</option>
-                            <option value="Brigadeiro Gourmet" data-preco="48">Brigadeiro Gourmet - R$ 48</option>
-                            <option value="Mussarela" data-preco="48">Mussarela - R$ 48</option>
-                        </select>
-                        </div> -->
-                        
-                        <!-- NOVO: Borda -->
-                        <!-- Adicione isto dentro da div .bloco-pizza-item de cada pizza -->
-                        <!-- <div class="form-group" style="margin-top: 10px;">
-                            <label>Borda da Pizza <span class="numero-pizza-label"></span></label>
-                            <select class="form-control borda-indiv" onchange="calcularTotal()">
-                                <option value="Sem Borda" data-preco="0">Tradicional (Sem Borda) - Grátis</option>
-                                <option value="Catupiry" data-preco="15">Borda de Catupiry - R$ 15,00</option>
-                                <option value="Cheddar" data-preco="15">Borda de Cheddar - R$ 15,00</option>
-                                <option value="Chocolate" data-preco="15">Borda de Chocolate - R$ 15,00</option>
-                                <option value="Mussarela" data-preco="20">Borda de Mussarela - R$ 20,00</option>
-                            </select>
-                        </div> -->
-
-                    <!-- NOVO: Bebidas -->
+            <!-- Bebidas -->
             <div class="form-group">
                 <label for="pizzaBebida">Bebidas</label>
                 <select id="pizzaBebida" class="form-control" onchange="calcularTotal()">
@@ -300,73 +260,77 @@
                 </select>
             </div>
 
-                    <!-- Endereço (Mantido) -->
-                    <div class="form-group">
-                        <label for="clientAddress">Endereço de Entrega (Rua, Número, Ap/Casa)</label>
-                        <input type="text" id="clientAddress" class="form-control"
-                            placeholder="Ex: Av. Paulista, 1000 - Ap 42" required>
-                    </div>
+            <!-- Bloco de Endereço (Envolvido para ocultar automaticamente se for retirada) -->
+            <div id="secao-endereco">
+                <!-- Endereço (Mantido) -->
+                <div class="form-group">
+                    <label for="clientAddress">Endereço de Entrega (Rua, Número, Ap/Casa)</label>
+                    <input type="text" id="clientAddress" class="form-control"
+                        placeholder="Ex: Av. Paulista, 1000 - Ap 42">
+                </div>
 
-                    <!-- Bairro (Mantido) -->
-                    <div class="form-group">
-                        <label for="clientNeighborhood">Bairro</label>
-                        <input type="text" id="clientNeighborhood" class="form-control" placeholder="Ex: Bela Vista" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="clientPhone">Telefone / WhatsApp</label>
-                        <input type="tel" id="clientPhone" placeholder="(12) 99999-9999" required class="form-control"
-                            style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
-                    </div>
+                <!-- Bairro (Mantido) -->
+                <div class="form-group">
+                    <label for="clientNeighborhood">Bairro</label>
+                    <input type="text" id="clientNeighborhood" class="form-control" placeholder="Ex: Bela Vista">
+                </div>
+            </div>
 
-                    <!-- Pagamento (Atualizado com onchange) -->
-                    <div class="form-group">
-                        <label for="paymentMethod">Forma de Pagamento</label>
-                        <select id="paymentMethod" class="form-control" required onchange="verificarPix()">
-                            <option value="" disabled selected>Como deseja pagar?</option>
-                            <option value="Pix">Pix (Aprovação Instantânea)</option>
-                            <option value="Cartão de Crédito">Cartão de Crédito (Na entrega)</option>
-                            <option value="Cartão de Débito">Cartão de Débito (Na entrega)</option>
-                            <option value="Dinheiro">Dinheiro</option>
-                        </select>
-                    </div>
+            <div class="form-group">
+                <label for="clientPhone">Telefone / WhatsApp</label>
+                <input type="tel" id="clientPhone" placeholder="(12) 99999-9999" required class="form-control"
+                    style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+            </div>
 
-                    <!-- NOVO: Área PIX (Escondida por padrão) -->
-                    <div id="areaPix" class="form-group"
-                        style="display: none; background: #e6f7ff; padding: 15px; border-radius: 8px; border: 1px dashed #0099ff; text-align: center; margin-bottom: 15px;">
-                        <h4 style="color: #005c99; font-weight: bold; margin-bottom: 10px;">Realize o Pagamento PIX</h4>
-                        <p style="margin: 5px 0; color: #333;">Chave PIX (Celular): <strong>12996353271</strong></p>
-                        <p style="margin: 5px 0; color: #333;">Nome: Baratella Pizzaria</p>
-                        <p style="font-size: 1.2rem; color: #b30000; font-weight: bold; margin: 10px 0;">
-                            Valor exato: R$ <span id="valorPixExibicao">0,00</span>
-                        </p>
-                        <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
-                            * Faça o pagamento e envie o comprovante para o WhatsApp (12996353271) e clique em "Fazer Pedido". O preparo inicia após a
-                            confirmação no caixa.
-                        </p>
-                    </div>
+            <!-- Pagamento (Atualizado com onchange) -->
+            <div class="form-group">
+                <label for="paymentMethod">Forma de Pagamento</label>
+                <select id="paymentMethod" class="form-control" required onchange="verificarPix()">
+                    <option value="" disabled selected>Como deseja pagar?</option>
+                    <option value="Pix">Pix (Aprovação Instantânea)</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito (Na entrega)</option>
+                    <option value="Cartão de Débito">Cartão de Débito (Na entrega)</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                </select>
+            </div>
 
-                    <!-- NOVO: Observações -->
-                    <div class="form-group">
-                        <label for="pizzaObservacao">Observações (Opcional)</label>
-                        <textarea id="pizzaObservacao" class="form-control" rows="2"
-                            placeholder="Ex: Tirar cebola, troco para 50..."></textarea>
-                    </div>
+            <!-- NOVO: Área PIX (Escondida por padrão) -->
+            <div id="areaPix" class="form-group"
+                style="display: none; background: #e6f7ff; padding: 15px; border-radius: 8px; border: 1px dashed #0099ff; text-align: center; margin-bottom: 15px;">
+                <h4 style="color: #005c99; font-weight: bold; margin-bottom: 10px;">Realize o Pagamento PIX</h4>
+                <p style="margin: 5px 0; color: #333;">Chave PIX (Celular): <strong>12996353271</strong></p>
+                <p style="margin: 5px 0; color: #333;">Nome: Baratella Pizzaria</p>
+                <p style="font-size: 1.2rem; color: #b30000; font-weight: bold; margin: 10px 0;">
+                    Valor exato: R$ <span id="valorPixExibicao">0,00</span>
+                </p>
+                <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                    * Faça o pagamento e envie o comprovante para o WhatsApp (12996353271) e clique em "Fazer Pedido". O preparo inicia após a
+                    confirmação no caixa.
+                </p>
+            </div>
 
-                    <!-- NOVO: Total Dinâmico -->
-                    <div class="form-group" style="text-align: center; margin: 25px 0;">
-                        <h3 style="color: #b30000; font-weight: bold; font-size: 1.4rem;">
-                            Total a Pagar: R$ <span id="valorTotalExibicao">0,00</span>
-                        </h3>
-                        <p style="font-size: 0.9rem; color: #666;" id="textoTaxaEntrega">
-                            Taxa de entrega: <strong>Calculando bairro...</strong>
-                        </p>
-                    </div>
+            <!-- NOVO: Observações -->
+            <div class="form-group">
+                <label for="pizzaObservacao">Observações (Opcional)</label>
+                <textarea id="pizzaObservacao" class="form-control" rows="2"
+                    placeholder="Ex: Tirar cebola, troco para 50..."></textarea>
+            </div>
 
-                    <!-- Botão de Envio (Mantido) -->
-                    <button type="submit" class="btn btn-checkout">
-                        <span>Fazer Pedido</span>
-                    </button>
-                </form>
+            <!-- NOVO: Total Dinâmico -->
+            <div class="form-group" style="text-align: center; margin: 25px 0;">
+                <h3 style="color: #b30000; font-weight: bold; font-size: 1.4rem;">
+                    Total a Pagar: R$ <span id="valorTotalExibicao">0,00</span>
+                </h3>
+                <p style="font-size: 0.9rem; color: #666;" id="textoTaxaEntrega">
+                    Taxa de entrega: <strong>Calculando bairro...</strong>
+                </p>
+            </div>
+
+            <!-- Botão de Envio (Mantido) -->
+            <button type="submit" class="btn btn-checkout">
+                <span>Fazer Pedido</span>
+            </button>
+        </form>
                 <!-- TELA DE RASTREIO (Fica escondida até o pedido ser feito ou recuperado da memória) -->
                 <div id="telaRastreio"
                     style="display: none; text-align: center; padding: 30px 15px; background: #fff; border-radius: 8px; border: 1px solid #eee; margin-top: 20px;">

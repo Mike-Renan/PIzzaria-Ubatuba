@@ -267,7 +267,7 @@ function renderizarPedidos(pedidos) {
                     '<span class="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded">' + new Date(pedido.created_at).toLocaleTimeString() + '</span>' +
                 '</div>' +
                 '<p class="text-gray-700 font-semibold mt-1">👤 Cliente: ' + (pedido.cliente_nome || 'Não informado') + '</p>' +
-                '<p class="text-gray-700 text-sm mt-1">📞 Telefone: <strong>' + (pedido.telefone || 'Não informado') + '</strong></p>' + // <--- TELEFONE INCLUÍDO AQUI NOS ATIVOS
+                '<p class="text-gray-700 text-sm mt-1">📞 Telefone: <strong>' + (pedido.telefone || 'Não informado') + '</strong></p>' +
                 '<p class="text-gray-600 text-sm mt-1">📍 Endereço: ' + (pedido.endereco || '') + ' - Bairro: ' + (pedido.bairro || '') + '</p>' +
                 '<p class="text-gray-600 text-sm mt-1">💳 Pagamento: ' + (pedido.forma_pagamento || '') + '</p>' +
                 '<p class="text-red-600 font-bold mt-1">💰 Total: R$ ' + valorFormatado + '</p>' +
@@ -334,11 +334,70 @@ function imprimirPedido(pedido, numeroDiario) {
         return;
     }
     
-    const bordaText = pedido.borda && pedido.borda !== 'Sem Borda' ? `<br><b>Adicional:</b> ${pedido.borda}` : '';
-    const bebidaText = pedido.bebida && pedido.bebida !== 'Sem Bebida' ? `<br><b>Bebida:</b> ${pedido.bebida}` : '';
-    const obsText = pedido.observacao && pedido.observacao !== 'Nenhuma' ? `<br><b>OBS:</b> ${pedido.observacao}` : '';
-    const taxaFreteText = pedido.taxa_entrega ? `<br><b>Taxa Entrega:</b> R$ ${parseFloat(pedido.taxa_entrega).toFixed(2).replace('.', ',')}` : '';
     const valorFormatado = pedido.valor_total ? parseFloat(pedido.valor_total).toFixed(2).replace('.', ',') : '0,00';
+
+    // Organizar cada pizza e seu adicional de forma limpa, linha por linha
+    let linhasItens = [];
+    
+    if (pedido.sabor && pedido.sabor.includes('|')) {
+        let sabores = pedido.sabor.split(' | ');
+        let bordas = pedido.borda ? pedido.borda.split(' | ') : [];
+        
+        sabores.forEach((saborItem, index) => {
+            linhasItens.push(saborItem.toUpperCase());
+            if (bordas[index]) {
+                let nomeBorda = bordas[index].includes(':') ? bordas[index].split(':').pop().trim() : bordas[index];
+                linhasItens.push("ADICIONAL: " + nomeBorda.toUpperCase());
+            }
+            if (index < sabores.length - 1) {
+                linhasItens.push(""); // linha em branco entre pizzas diferentes para respirar o layout
+            }
+        });
+    } else {
+        linhasItens.push((pedido.quantidade || '1') + "X " + (pedido.sabor || '').toUpperCase());
+        if (pedido.borda && pedido.borda !== 'Sem Borda') {
+            let nomeBorda = pedido.borda.includes(':') ? pedido.borda.split(':').pop().trim() : pedido.borda;
+            linhasItens.push("ADICIONAL: " + nomeBorda.toUpperCase());
+        }
+    }
+
+    if (pedido.bebida && pedido.bebida !== 'Sem Bebida') {
+        if (linhasItens.length > 0) linhasItens.push("");
+        linhasItens.push("BEBIDA: " + pedido.bebida.toUpperCase());
+    }
+
+    if (pedido.taxa_entrega && parseFloat(pedido.taxa_entrega) > 0) {
+        linhasItens.push("TAXA ENTREGA: R$ " + parseFloat(pedido.taxa_entrega).toFixed(2).replace('.', ','));
+    }
+
+    if (pedido.observacao && pedido.observacao !== 'Nenhuma') {
+        if (linhasItens.length > 0) linhasItens.push("");
+        linhasItens.push("OBS: " + pedido.observacao.toUpperCase());
+    }
+
+    const larguraCaixa = 38;
+    
+    function criarLinhaCaixa(texto) {
+        let textoLimpo = texto.padEnd(larguraCaixa, ' ');
+        return "│ " + textoLimpo + " │";
+    }
+
+    let topoCaixa = "┌" + "─".repeat(larguraCaixa + 2) + "┐";
+    let fundoCaixa = "└" + "─".repeat(larguraCaixa + 2) + "┘";
+    let linhaVaziaCaixa = "│ " + " ".repeat(larguraCaixa) + " │";
+
+    let htmlItensTexto = topoCaixa + "<br>";
+    htmlItensTexto += criarLinhaCaixa("ITENS DO PEDIDO:") + "<br>";
+    
+    linhasItens.forEach(linha => {
+        if (linha === "") {
+            htmlItensTexto += linhaVaziaCaixa + "<br>";
+        } else {
+            htmlItensTexto += criarLinhaCaixa(linha) + "<br>";
+        }
+    });
+    
+    htmlItensTexto += fundoCaixa;
 
     const htmlConteudo = 
         "<!DOCTYPE html>" +
@@ -346,10 +405,11 @@ function imprimirPedido(pedido, numeroDiario) {
         "<head>" +
             "<meta charset='UTF-8'>" +
             "<style>" +
-                "body { font-family: 'Courier New', monospace; font-size: 12px; width: 300px; margin: 0; padding: 10px; }" +
-                "h2, p { margin: 5px 0; text-align: left; }" +
-                "h2 { text-align: center; margin-bottom: 10px; }" +
-                ".divider { border-bottom: 1px dashed #000; margin: 10px 0; }" +
+                "body { font-family: 'Courier New', monospace; font-size: 12px; width: 300px; margin: 0; padding: 10px; line-height: 1.2;font-weight: bold }" +
+                "h2, p { margin: 4px 0; text-align: left; }" +
+                "h2 { text-align: center; margin-bottom: 8px; }" +
+                ".divider { border-bottom: 1px dashed #000; margin: 8px 0; }" +
+                ".box-itens { font-weight: bold; white-space: pre; }" +
             "</style>" +
         "</head>" +
         "<body>" +
@@ -364,13 +424,7 @@ function imprimirPedido(pedido, numeroDiario) {
             "<p><b>Endereço:</b> " + (pedido.endereco || '') + "</p>" +
             "<p><b>Bairro:</b> " + (pedido.bairro || '') + "</p>" +
             "<div class='divider'></div>" +
-            "<p><b>Itens do Pedido:</b><br>" + 
-            (pedido.quantidade || '1') + "x " + (pedido.sabor || '') + 
-            bordaText + 
-            bebidaText + 
-            taxaFreteText +
-            "</p>" +
-            obsText +
+            "<div class='box-itens'>" + htmlItensTexto + "</div>" +
             "<div class='divider'></div>" +
             "<p><b>Forma de Pagamento:</b><br>" + (pedido.forma_pagamento || '') + "</p>" +
             "<p align='right' style='font-size: 14px;'><b>TOTAL: R$ " + valorFormatado + "</b></p>" +

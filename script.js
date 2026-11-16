@@ -50,7 +50,7 @@ const catalogoSabores = [
     // --- Salgadas R$ 30,00 ---
     { nome: "Alho (Mussarela, alho)", preco: 30.00 },
     { nome: "Boris (Presunto, mussarela)", preco: 30.00 },
-    { nome: "Calabresa (Calabresa, cebola)", preco: 30.00 },
+    { nome: "Calabresa (Calabresa, cebola)", preco: 25.00 },
     { nome: "Frango c/ Catupiry (Frango desfiado, catupiry)", preco: 30.00 },
     { nome: "Marguerita (Mussarela, tomate, manjericão)", preco: 30.00 },
     { nome: "Milho (Mussarela, milho)", preco: 30.00 },

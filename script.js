@@ -50,7 +50,7 @@ const catalogoSabores = [
     // --- Salgadas R$ 30,00 ---
     { nome: "Alho (Mussarela, alho)", preco: 30.00 },
     { nome: "Boris (Presunto, mussarela)", preco: 30.00 },
-    { nome: "Calabresa (Calabresa, cebola)", preco: 25.00 },
+    { nome: "Calabresa (Calabresa, cebola)", preco: 30.00 },
     { nome: "Frango c/ Catupiry (Frango desfiado, catupiry)", preco: 30.00 },
     { nome: "Marguerita (Mussarela, tomate, manjericão)", preco: 30.00 },
     { nome: "Milho (Mussarela, milho)", preco: 30.00 },
@@ -126,7 +126,7 @@ function verificarPix() {
     }
 }
 
-// Função para alternar entre Entrega e Retirada
+// Função global para alternar entre Entrega e Retirada
 window.alternarTipoPedido = function() {
     const tipoEl = document.querySelector('input[name="tipo_pedido"]:checked');
     const tipo = tipoEl ? tipoEl.value : 'entrega';
@@ -138,12 +138,16 @@ window.alternarTipoPedido = function() {
         if (secaoEndereco) secaoEndereco.style.display = 'none';
         if (inputEndereco) {
             inputEndereco.required = false;
-            inputEndereco.dataset.valorAntigo = inputEndereco.value;
+            if (!inputEndereco.dataset.valorAntigo) {
+                inputEndereco.dataset.valorAntigo = inputEndereco.value;
+            }
             inputEndereco.value = 'Retirada no Balcão';
         }
         if (inputBairro) {
             inputBairro.required = false;
-            inputBairro.dataset.valorAntigo = inputBairro.value;
+            if (!inputBairro.dataset.valorAntigo) {
+                inputBairro.dataset.valorAntigo = inputBairro.value;
+            }
             inputBairro.value = 'Balcão';
         }
     } else {

@@ -20,19 +20,47 @@
         <!-- ... resto do seu código ... -->
         <div class="max-w-4xl mx-auto">
             <header class="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow">
-               <img src="./img/logo2.png" alt="Logo Baratella Pizzaria" class="w-16 h-16 object-contain rounded-full shadow-sm border border-gray-100">
-                <h1 class="text-2xl font-bold text-red-600">🍕 Painel de Pedidos (Caixa)</h1>
-                <button id="btn-som" onclick="desbloquearSom()"
-                    class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-full font-medium text-sm transition">
-                    🔇 Clique aqui para ativar o Som
-                </button>
-                <!-- NOVO BOTÃO -->
-                <button id="btn-zerar" onclick="zerarNumeracao()"
-                    class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-3 py-1 rounded-full font-medium text-sm transition shadow-sm border border-purple-200">
-                    🔄 Reiniciar Numeração (Novo Dia)
-                </button>
-                <span id="status-conexao"
-                    class="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-medium">Conectando...</span>
+              <!-- CABEÇALHO UNIFORME E ESPAÇADO -->
+
+    
+    <!-- Logo e Título -->
+    <div class="flex items-center gap-3">
+        <img src="./img/logo-pizza.jpg" alt="Logo" class="w-12 h-12 object-cover rounded-full border">
+        <!-- Ajuste o nome da imagem da logo se necessário -->
+        <h1 class="text-xl font-extrabold text-red-600 flex items-center gap-2 m-0">
+            🍕 Painel de Pedidos (Caixa)
+        </h1>
+    </div>
+    
+    <!-- Grupo de Botões e Status Padronizados -->
+    <div class="flex flex-wrap items-center gap-3 justify-center lg:justify-end">
+    
+        <!-- Botão de Som -->
+        <button id="btn-som" onclick="desbloquearSom()"
+            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-medium transition border border-gray-300 shadow-sm flex items-center gap-2">
+            🔇 Clique aqui para ativar o Som
+        </button>
+    
+        <!-- Botão Reiniciar Numeração -->
+        <button onclick="zerarNumeracao()"
+            class="bg-purple-50 hover:bg-purple-100 text-purple-800 px-4 py-2.5 rounded-lg text-sm font-medium transition border border-purple-200 shadow-sm flex items-center gap-2">
+            🔄 Reiniciar Numeração (Novo Dia)
+        </button>
+    
+        <!-- Status de Conexão -->
+        <div id="status-conexao"
+            class="bg-green-50 text-green-800 px-4 py-2.5 rounded-lg text-sm font-medium border border-green-200 shadow-sm flex items-center gap-2">
+            🟢 Online (Tempo Real)
+        </div>
+    
+        <!-- Botão Gerenciar Cardápio -->
+        <button onclick="carregarPainelCardapio()"
+            class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition shadow-sm flex items-center gap-2">
+            ⚙️ Gerenciar Cardápio e Preços
+        </button>
+    
+    </div>
+    </div>
                 </header>
                 <!-- Barra de Navegação do Painel do Caixa -->
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-lg shadow">

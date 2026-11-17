@@ -368,7 +368,7 @@ function imprimirPedido(pedido, numeroDiario) {
             let pedacosSabor = quebrarTexto(textoSabor, larguraMaximaLinha);
             pedacosSabor.forEach(p => linhasItens.push(p));
 
-            // Exibe a borda/adicional de cada pizza (mesmo se for Sem Borda)
+            // Exibe a borda/adicional de cada pizza
             if (bordas[index]) {
                 let nomeBorda = bordas[index].includes(':') ? bordas[index].split(':').pop().trim() : bordas[index];
                 let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
@@ -441,7 +441,6 @@ function imprimirPedido(pedido, numeroDiario) {
         "<head>" +
             "<meta charset='UTF-8'>" +
             "<style>" +
-                // Garante que absolutamente todo o texto da comanda saia em negrito
                 "body { font-family: 'Courier New', monospace; font-size: 11px; width: 280px; margin: 0; padding: 5px; line-height: 1.15; font-weight: bold; }" +
                 "h2, p { margin: 3px 0; text-align: left; font-weight: bold; }" +
                 "h2 { text-align: center; margin-bottom: 5px; font-size: 14px; font-weight: bold; }" +
@@ -510,5 +509,81 @@ function tocarAlarme() {
         setTimeout(() => {
             som.volume = 0;
         }, 4000); 
+    }
+}
+
+// ==========================================
+// PAINEL DE GESTÃO DE PREÇOS E PROMOÇÕES (ADICIONADO AO FIM)
+// ==========================================
+window.carregarPainelCardapio = async function() {
+    const containerEl = document.getElementById('lista-pedidos'); // Usa a mesma área do painel para exibir os preços ao clicar
+    if (!containerEl) return;
+
+    containerEl.innerHTML = '<p class="text-center py-5 text-gray-500">A carregar cardápio...</p>';
+
+    const { data: itens, error } = await supabaseClient
+        .from('cardapio')
+        .select('*')
+        .order('nome', { ascending: true });
+
+    if (error) {
+        containerEl.innerHTML = '<p class="text-red-500 text-center">Erro ao carregar o cardápio.</p>';
+        return;
+    }
+
+    containerEl.innerHTML = `
+        <div class="bg-white p-6 rounded-lg shadow border mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">🍕 Gestão de Preços e Promoções</h3>
+                <button onclick="carregarPedidosAtivos()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm font-medium transition">
+                    ⬅️ Voltar para Pedidos Ativos
+                </button>
+            </div>
+            <p class="text-sm text-gray-600 mb-6">Altere o preço de qualquer pizza ou item abaixo e clique em "Salvar" para atualizar instantaneamente no site dos clientes.</p>
+            <div class="flex flex-col gap-3" id="form-atualiza-precos"></div>
+        </div>
+    `;
+
+    const subContainer = document.getElementById('form-atualiza-precos');
+
+    itens.forEach(item => {
+        const linha = document.createElement('div');
+        linha.className = "flex flex-col sm:flex-row justify-between items-center bg-gray-50 p-3 rounded border gap-3";
+        
+        linha.innerHTML = `
+            <span class="font-medium text-gray-800 w-full sm:w-2/3">${item.nome}</span>
+            <div class="flex items-center gap-2 w-full sm:w-1/3 justify-end">
+                <span class="text-sm text-gray-500">R$</span>
+                <input type="number" step="0.10" id="preco-${item.id}" value="${item.preco}" 
+                    class="w-28 p-2 border rounded text-right font-bold text-green-700 focus:ring-2 focus:ring-red-500 outline-none">
+                <button onclick="atualizarPrecoItem(${item.id})" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition shadow">
+                    Salvar
+                </button>
+            </div>
+        `;
+        subContainer.appendChild(linha);
+    });
+}
+
+window.atualizarPrecoItem = async function(id) {
+    const inputPreco = document.getElementById(`preco-${id}`);
+    const novoPreco = parseFloat(inputPreco.value);
+
+    if (isNaN(novoPreco) || novoPreco <= 0) {
+        alert("Por favor, insira um preço válido.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('cardapio')
+        .update({ preco: novoPreco })
+        .eq('id', id);
+
+    if (error) {
+        console.error("Erro ao atualizar preço:", error);
+        alert("Erro ao salvar o novo preço.");
+    } else {
+        alert("Preço atualizado com sucesso! Já está valendo no site para os clientes.");
     }
 }

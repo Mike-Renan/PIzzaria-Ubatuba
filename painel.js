@@ -55,10 +55,9 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // ==========================================
-// FUNÇÕES DE EXIBIÇÃO: ATIVOS E HISTÓRICO (Tornadas Globais com window.)
+// FUNÇÕES DE EXIBIÇÃO: ATIVOS E HISTÓRICO
 // ==========================================
 
-// Função para carregar pedidos pendentes, em preparo ou entrega
 window.carregarPedidosAtivos = async function() {
     const listaPedidosEl = document.getElementById('lista-pedidos');
     if (!listaPedidosEl) return;
@@ -69,7 +68,7 @@ window.carregarPedidosAtivos = async function() {
         .from('pedidos')
         .select('*')
         .neq('status', 'concluido')
-        .order('created_at', { ascending: true }); // Ordena do mais antigo para o mais novo
+        .order('created_at', { ascending: true });
 
     if (error) {
         console.error("Erro ao carregar pedidos:", error);
@@ -79,7 +78,6 @@ window.carregarPedidosAtivos = async function() {
         }
         return;
     }
-    // LÓGICA DE RECONTAGEM: Filtra apenas os pedidos feitos APÓS zerar
     const dataLimite = new Date(dataUltimoZerar);
     const pedidosAtuais = pedidos.filter(pedido => new Date(pedido.created_at) > dataLimite);
     
@@ -98,7 +96,6 @@ window.carregarHistoricoPedidos = async function() {
 
     listaPedidosEl.innerHTML = '<p class="text-center py-5 text-gray-500">A carregar histórico...</p>';
 
-    // Aumentamos o limite para 300 para garantir que puxa vários dias anteriores
     const { data: concluidos, error } = await supabaseClient
         .from('pedidos')
         .select('*')
@@ -117,9 +114,8 @@ window.carregarHistoricoPedidos = async function() {
         return;
     }
 
-    historicoGlobal = concluidos; // Armazena todos os dados para busca instantânea
+    historicoGlobal = concluidos;
 
-    // Injeta a Barra de Busca
     listaPedidosEl.innerHTML = `
         <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3 bg-gray-100 p-3 rounded-lg border border-gray-200 shadow-sm">
             <h3 class="text-lg font-bold text-gray-800 m-0">📜 Fechamento de Caixa</h3>
@@ -136,7 +132,6 @@ window.carregarHistoricoPedidos = async function() {
     renderizarHistoricoAgrupado(historicoGlobal);
 }
 
-// Filtro instantâneo sem precisar consultar o banco de dados novamente
 window.filtrarHistorico = function(termo) {
     const termoMinusculo = termo.toLowerCase().trim();
     const filtrados = historicoGlobal.filter(p => {
@@ -148,7 +143,6 @@ window.filtrarHistorico = function(termo) {
     renderizarHistoricoAgrupado(filtrados);
 }
 
-// Função inteligente que agrupa por dia e soma o faturamento
 window.renderizarHistoricoAgrupado = function(pedidos) {
     const container = document.getElementById('container-cards-historico');
     if (!container) return;
@@ -159,12 +153,11 @@ window.renderizarHistoricoAgrupado = function(pedidos) {
         return;
     }
 
-    // 1. Agrupar os pedidos pela data
     const gruposPorData = {};
 
     pedidos.forEach(pedido => {
         const dataObj = new Date(pedido.created_at);
-        const dataFormatada = dataObj.toLocaleDateString('pt-BR'); // Gera formato "12/11/2026"
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR');
 
         if (!gruposPorData[dataFormatada]) {
             gruposPorData[dataFormatada] = {
@@ -177,14 +170,12 @@ window.renderizarHistoricoAgrupado = function(pedidos) {
         gruposPorData[dataFormatada].totalFaturado += parseFloat(pedido.valor_total || 0);
     });
 
-    // 2. Renderizar os grupos na tela (Cada dia vira um bloco fechado)
     for (const [data, grupo] of Object.entries(gruposPorData)) {
         const totalFormatado = grupo.totalFaturado.toFixed(2).replace('.', ',');
 
         const diaBloco = document.createElement('div');
-        diaBloco.className = 'mb-8'; // Espaçamento entre os dias
+        diaBloco.className = 'mb-8';
         diaBloco.innerHTML = `
-            <!-- Cabeçalho do Dia (Resumo Financeiro) -->
             <div class="bg-gray-800 text-white px-4 py-3 rounded-t-lg flex flex-col sm:flex-row justify-between items-center shadow">
                 <span class="font-bold text-lg tracking-wide">📅 ${data}</span>
                 <div class="text-sm font-semibold mt-2 sm:mt-0 flex gap-4">
@@ -192,10 +183,7 @@ window.renderizarHistoricoAgrupado = function(pedidos) {
                     <span class="bg-green-600 px-3 py-1 rounded">💰 R$ ${totalFormatado}</span>
                 </div>
             </div>
-            
-            <!-- Lista de Pedidos desse Dia -->
-            <div class="bg-white border border-gray-200 border-t-0 rounded-b-lg p-3 shadow-sm flex flex-col gap-2">
-            </div>
+            <div class="bg-white border border-gray-200 border-t-0 rounded-b-lg p-3 shadow-sm flex flex-col gap-2"></div>
         `;
 
         const listaContainer = diaBloco.querySelector('div.bg-white');
@@ -206,8 +194,6 @@ window.renderizarHistoricoAgrupado = function(pedidos) {
 
             const valorCard = pedido.valor_total ? parseFloat(pedido.valor_total).toFixed(2).replace('.', ',') : '0,00';
             const hora = new Date(pedido.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            
-            // Aqui garantimos que o Histórico usa o novo número (ou o ID como segurança)
             const numeroComanda = pedido.numero_diario || pedido.id;
 
            card.innerHTML = `
@@ -230,7 +216,6 @@ window.renderizarHistoricoAgrupado = function(pedidos) {
     }
 }
 
-// Função que desenha os cartões de pedido ATIVO na tela do caixa
 function renderizarPedidos(pedidos) {
     const listaPedidosEl = document.getElementById('lista-pedidos'); 
     
@@ -244,14 +229,12 @@ function renderizarPedidos(pedidos) {
     pedidos.forEach((pedido, index) => {
         const card = document.createElement('div');
         
-        // Cor da borda lateral baseada no status
-        let corBorda = 'border-red-500'; // pendente
+        let corBorda = 'border-red-500';
         if(pedido.status === 'preparando') corBorda = 'border-blue-500';
         if(pedido.status === 'entrega') corBorda = 'border-purple-500';
 
         card.className = `bg-white p-5 rounded-lg shadow border-l-4 ${corBorda} flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4`;
         
-        // Numeração unificada (puxa o número gravado no banco ou usa o ID como segurança)
         const numeroComanda = pedido.numero_diario || pedido.id;
         
         const borda = pedido.borda && pedido.borda !== 'Sem Borda' ? `<br>🧀 <b>Borda:</b> ${pedido.borda}` : '';
@@ -287,7 +270,6 @@ function renderizarPedidos(pedidos) {
                 '<button class="btn-concluir bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded text-sm transition shadow">✅ Concluir / Finalizar</button>' +
             '</div>';
 
-        // Atribui os eventos de clique aos botões do cartão (passando o número correto da comanda)
         const btnImp = card.querySelector('.btn-imp');
         if (btnImp) btnImp.onclick = () => imprimirPedido(pedido, numeroComanda);
 
@@ -336,7 +318,6 @@ function imprimirPedido(pedido, numeroDiario) {
     
     const valorFormatado = pedido.valor_total ? parseFloat(pedido.valor_total).toFixed(2).replace('.', ',') : '0,00';
 
-    // Função auxiliar para quebrar textos longos em várias linhas de tamanho máximo
     function quebrarTexto(texto, tamanhoMax) {
         let palavras = texto.split(' ');
         let linhas = [];
@@ -355,28 +336,29 @@ function imprimirPedido(pedido, numeroDiario) {
     }
 
     let linhasItens = [];
-    const larguraMaximaLinha = 28; // Ajustado para bobinas térmicas de 58mm
+    const larguraMaximaLinha = 28;
     
     if (pedido.sabor && pedido.sabor.includes('|')) {
         let sabores = pedido.sabor.split(' | ');
         let bordas = pedido.borda ? pedido.borda.split(' | ') : [];
         
         sabores.forEach((saborItem, index) => {
-            // Remove qualquer prefixo anterior ("Pizza 1:", etc.) para evitar duplicações
             let saborLimpo = saborItem.replace(/^pizza\s*\d+:\s*/i, '').trim().toUpperCase();
             let textoSabor = "PIZZA " + (index + 1) + ": " + saborLimpo;
             let pedacosSabor = quebrarTexto(textoSabor, larguraMaximaLinha);
             pedacosSabor.forEach(p => linhasItens.push(p));
 
-            // Exibe a borda/adicional de cada pizza
+            // CORREÇÃO APLICADA AQUI: Exibe "BORDA:" em vez de "ADICIONAL:"
             if (bordas[index]) {
                 let nomeBorda = bordas[index].includes(':') ? bordas[index].split(':').pop().trim() : bordas[index];
-                let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
-                let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
-                pedacosBorda.forEach(p => linhasItens.push(p));
+                if (nomeBorda.toUpperCase() !== 'SEM BORDA' && nomeBorda.toUpperCase() !== 'TRADICIONAL') {
+                    let textoBorda = "BORDA: " + nomeBorda.toUpperCase();
+                    let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
+                    pedacosBorda.forEach(p => linhasItens.push(p));
+                }
             }
             if (index < sabores.length - 1) {
-                linhasItens.push(""); // linha em branco para espaçamento
+                linhasItens.push("");
             }
         });
     } else {
@@ -387,9 +369,11 @@ function imprimirPedido(pedido, numeroDiario) {
 
         if (pedido.borda) {
             let nomeBorda = pedido.borda.includes(':') ? pedido.borda.split(':').pop().trim() : pedido.borda;
-            let textoBorda = "ADICIONAL: " + nomeBorda.toUpperCase();
-            let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
-            pedacosBorda.forEach(p => linhasItens.push(p));
+            if (nomeBorda.toUpperCase() !== 'SEM BORDA' && nomeBorda.toUpperCase() !== 'TRADICIONAL') {
+                let textoBorda = "BORDA: " + nomeBorda.toUpperCase();
+                let pedacosBorda = quebrarTexto(textoBorda, larguraMaximaLinha);
+                pedacosBorda.forEach(p => linhasItens.push(p));
+            }
         }
     }
 
@@ -411,7 +395,7 @@ function imprimirPedido(pedido, numeroDiario) {
         pedacosObs.forEach(p => linhasItens.push(p));
     }
 
-    const larguraCaixa = 30; // Perfeito para impressoras térmicas de 58mm
+    const larguraCaixa = 30;
     
     function criarLinhaCaixa(texto) {
         let textoLimpo = texto.padEnd(larguraCaixa, ' ');
@@ -485,12 +469,10 @@ function imprimirPedido(pedido, numeroDiario) {
 
 function desbloquearSom() {
     const som = document.getElementById('som-alarme');
-    
     if (som) {
-        som.volume = 0; // Coloca no mudo para ativar a permissão do browser
+        som.volume = 0;
         som.play().catch(e => console.log("Aguardando interação..."));
     }
-
     const btnSom = document.getElementById('btn-som');
     if (btnSom) {
         btnSom.innerHTML = "🔊 Som Ativado (Modo PDV)";
@@ -500,12 +482,9 @@ function desbloquearSom() {
 
 function tocarAlarme() {
     const som = document.getElementById('som-alarme');
-    
     if (som) {
         som.currentTime = 0;
-        som.volume = 1; // Aumenta o volume
-        
-        // Muta após 4 segundos
+        som.volume = 1;
         setTimeout(() => {
             som.volume = 0;
         }, 4000); 
@@ -513,10 +492,10 @@ function tocarAlarme() {
 }
 
 // ==========================================
-// PAINEL DE GESTÃO DE PREÇOS E PROMOÇÕES (ADICIONADO AO FIM)
+// PAINEL DE GESTÃO DE PREÇOS E PROMOÇÕES
 // ==========================================
 window.carregarPainelCardapio = async function() {
-    const containerEl = document.getElementById('lista-pedidos'); // Usa a mesma área do painel para exibir os preços ao clicar
+    const containerEl = document.getElementById('lista-pedidos');
     if (!containerEl) return;
 
     containerEl.innerHTML = '<p class="text-center py-5 text-gray-500">A carregar cardápio...</p>';

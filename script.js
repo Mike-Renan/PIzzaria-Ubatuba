@@ -23,7 +23,12 @@ const SUPABASE_ANON_KEY = 'sb_publishable_SzTAcXjJTK5bkIOfAA_2cw_X6_2w7JC';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function carregarCardapioDoBanco() {
-    const { data, error } = await supabaseClient.from('cardapio').select('*').order('nome', { ascending: true });
+    const { data, error } = await supabaseClient
+        .from('cardapio')
+        .select('*')
+        .eq('ativo', true)
+        .order('nome', { ascending: true });
+
     if (!error && data) {
         catalogoSabores = data;
         gerarCamposDeSabores();

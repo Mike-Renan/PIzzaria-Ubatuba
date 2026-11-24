@@ -492,7 +492,7 @@ function tocarAlarme() {
 }
 
 // ==========================================
-// PAINEL DE GESTÃO DE PREÇOS E PROMOÇÕES
+// PAINEL DE GESTÃO DE PREÇOS, PROMOÇÕES E ITENS
 // ==========================================
 window.carregarPainelCardapio = async function() {
     const containerEl = document.getElementById('lista-pedidos');
@@ -512,13 +512,35 @@ window.carregarPainelCardapio = async function() {
 
     containerEl.innerHTML = `
         <div class="bg-white p-6 rounded-lg shadow border mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">🍕 Gestão de Preços e Promoções</h3>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                <h3 class="text-xl font-bold text-gray-800">🍕 Gestão de Cardápio, Preços e Promoções</h3>
                 <button onclick="carregarPedidosAtivos()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm font-medium transition">
                     ⬅️ Voltar para Pedidos Ativos
                 </button>
             </div>
-            <p class="text-sm text-gray-600 mb-6">Altere o preço de qualquer pizza ou item abaixo e clique em "Salvar" para atualizar instantaneamente no site dos clientes.</p>
+
+            <p class="text-sm text-gray-600 mb-6">Altere preços, pause itens em falta ou cadastre novos sabores/bebidas com atualização imediata no site.</p>
+
+            <!-- Formulário para adicionar novo produto -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
+                <h4 class="font-bold text-gray-800 mb-3 text-sm uppercase tracking-wide">➕ Adicionar Novo Produto</h4>
+                <div class="flex flex-col md:flex-row gap-3">
+                    <input type="text" id="novo-produto-nome" placeholder="Ex: Portuguesa Especial (Presunto, mussarela...)"
+                        class="flex-1 p-2 border rounded text-sm bg-white outline-none focus:ring-2 focus:ring-red-500">
+                    <select id="novo-produto-categoria" class="p-2 border rounded text-sm bg-white outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="salgada">Pizza Salgada</option>
+                        <option value="doce">Pizza Doce</option>
+                        <option value="bebida">Bebida</option>
+                    </select>
+                    <input type="number" step="0.10" min="0.10" id="novo-produto-preco" placeholder="Preço (ex: 39.90)"
+                        class="w-full md:w-32 p-2 border rounded text-sm bg-white outline-none focus:ring-2 focus:ring-red-500">
+                    <button onclick="adicionarProdutoCardapio()"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-bold transition shadow whitespace-nowrap">
+                        + Adicionar
+                    </button>
+                </div>
+            </div>
+
             <div class="flex flex-col gap-3" id="form-atualiza-precos"></div>
         </div>
     `;
@@ -526,23 +548,86 @@ window.carregarPainelCardapio = async function() {
     const subContainer = document.getElementById('form-atualiza-precos');
 
     itens.forEach(item => {
+        const estaAtivo = item.ativo !== false;
         const linha = document.createElement('div');
-        linha.className = "flex flex-col sm:flex-row justify-between items-center bg-gray-50 p-3 rounded border gap-3";
-        
+        linha.className = `flex flex-col lg:flex-row justify-between items-start lg:items-center p-3 rounded border gap-3 ${estaAtivo ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-200 opacity-80'}`;
+
+        const badgeStatus = estaAtivo
+            ? '<span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded font-semibold">Ativo</span>'
+            : '<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded font-semibold">Desativado</span>';
+
+        const textoBotaoToggle = estaAtivo ? '⏸️ Desativar' : '▶️ Ativar';
+        const classeBotaoToggle = estaAtivo
+            ? 'bg-amber-500 hover:bg-amber-600 text-white'
+            : 'bg-emerald-600 hover:bg-emerald-700 text-white';
+
         linha.innerHTML = `
-            <span class="font-medium text-gray-800 w-full sm:w-2/3">${item.nome}</span>
-            <div class="flex items-center gap-2 w-full sm:w-1/3 justify-end">
+            <div class="w-full lg:w-1/2 flex flex-wrap items-center gap-2">
+                <span class="font-medium text-gray-800">${item.nome}</span>
+                ${badgeStatus}
+            </div>
+            <div class="flex flex-wrap items-center gap-2 w-full lg:w-1/2 justify-start lg:justify-end">
                 <span class="text-sm text-gray-500">R$</span>
                 <input type="number" step="0.10" id="preco-${item.id}" value="${item.preco}" 
-                    class="w-28 p-2 border rounded text-right font-bold text-green-700 focus:ring-2 focus:ring-red-500 outline-none">
+                    class="w-24 p-1.5 border rounded text-right font-bold text-green-700 bg-white focus:ring-2 focus:ring-red-500 outline-none">
                 <button onclick="atualizarPrecoItem(${item.id})" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition shadow">
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium transition shadow">
                     Salvar
+                </button>
+                <button onclick="alternarStatusProduto(${item.id}, ${estaAtivo})" 
+                    class="${classeBotaoToggle} px-3 py-1.5 rounded text-sm font-medium transition shadow">
+                    ${textoBotaoToggle}
                 </button>
             </div>
         `;
         subContainer.appendChild(linha);
     });
+}
+
+window.adicionarProdutoCardapio = async function() {
+    const nomeInput = document.getElementById('novo-produto-nome');
+    const categoriaInput = document.getElementById('novo-produto-categoria');
+    const precoInput = document.getElementById('novo-produto-preco');
+
+    const nome = nomeInput ? nomeInput.value.trim() : '';
+    const categoria = categoriaInput ? categoriaInput.value : 'salgada';
+    const preco = precoInput ? parseFloat(precoInput.value) : NaN;
+
+    if (!nome) {
+        alert("Digite o nome do produto.");
+        return;
+    }
+    if (isNaN(preco) || preco <= 0) {
+        alert("Insira um preço válido maior que zero.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('cardapio')
+        .insert([{ nome: nome, categoria: categoria, preco: preco, ativo: true }]);
+
+    if (error) {
+        console.error("Erro ao adicionar produto:", error);
+        alert("Erro ao adicionar o produto.");
+    } else {
+        alert("Produto adicionado ao cardápio com sucesso!");
+        carregarPainelCardapio();
+    }
+}
+
+window.alternarStatusProduto = async function(id, statusAtual) {
+    const novoStatus = !statusAtual;
+    const { error } = await supabaseClient
+        .from('cardapio')
+        .update({ ativo: novoStatus })
+        .eq('id', id);
+
+    if (error) {
+        console.error("Erro ao alterar status do produto:", error);
+        alert("Erro ao atualizar o status do produto.");
+    } else {
+        carregarPainelCardapio();
+    }
 }
 
 window.atualizarPrecoItem = async function(id) {

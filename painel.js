@@ -433,7 +433,7 @@ function imprimirPedido(pedido, numeroDiario) {
             "</style>" +
         "</head>" +
         "<body>" +
-            "<h2>PIZZARIA UBATUBA</h2>" +
+            "<h2>PIZZARIA BARATELLA</h2>" +
             "<p style='text-align: center;'>Comanda de Produção</p>" +
             "<div class='divider'></div>" +
             "<p><b>Pedido: #" + numeroDiario + "</b></p>" +
